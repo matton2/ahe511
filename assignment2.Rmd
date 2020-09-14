@@ -1,8 +1,14 @@
 ---
 title: "Week2-Data Management"
 author: "Matthew Onimus"
-date: "9/10/2020"
-output: html_document
+date: "r lubridate::today()"
+output: 
+  html_document:
+    toc: true
+    toc_float:
+      collapse: true
+      smooth_scrolling: true
+    code_folding: show
 ---
 
 ```{r setup, include=FALSE}
@@ -11,6 +17,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r libs}
 library(tidyverse)
+library(gtsummary)
+library(gt)
 library(haven)
 library(readxl)
 library(rlang)
@@ -32,7 +40,8 @@ nhanes <- nhanesdemo %>%
   left_join(nhanesbmx, by = "SEQN") %>% 
   left_join(nhaneshosp, by = "SEQN")
 
-str(nhanes)
+tbl_summary(nhanes)
+
 
 
 
@@ -45,31 +54,75 @@ The final, joined data had `r ncol(nhanes)` variables and `r nrow(nhanes)` obser
 # 1. Review the frequency table for the number of overnight hospital visits and a histogram,
 what is this data and distribution telling you?
 
-```{r q1}
+```{r q1_dataAndfreq}
 
-unique(nhanes$HUQ071)
+nhanes2 <- nhanes %>%
+  #select(HUD080, HUQ071) %>% 
+  mutate(overnightHosp = HUD080,
+         overnightHosp = ifelse(HUQ071==7 | HUQ071==9 | is.na(HUQ071), NA, overnightHosp),
+         overnightHosp = ifelse(HUQ071 == 1 & (HUD080 == 77777 | HUD080 == 99999), NA, overnightHosp),
+         overnightHosp = ifelse(HUQ071 == 2, 0, overnightHosp),
+         waistin = BMXWAIST / 2.54,
+         children = 0,
+         children = ifelse(DMDHHSZA > 0 | DMDHHSZB > 0, 1, children)
+         
+  ) 
 
-nhanes2 <- nhanes %>% 
-  mutate(overnightHosp = ifelse(
-    huq071==7 | huq071==9 | huq071=.
-  ))
+nhanesChildren <- nhanes2 %>% 
+  filter(children == 1)
 
-ata nhanes2;
-	set nhanes;
-	*Start with the count as a default value.;
-	overnighthosp = HUD080;
-	*Denote the subjects who are missing the yes/no for any overnight stay.;
-	if huq071=7 | huq071=9 | huq071=. then overnighthosp=.;
-	*Denote the subjects who are yes but don't have a valid count.;
-	if huq071=1 & (HUD080=77777 | HUD080 = 99999) then overnighthosp=.;
-	*Finally, set the nos to 0.;
-	 if huq071=2 then overnighthosp=0;
+nhanes2 %>% 
+  select(overnightHosp) %>% 
+  group_by(overnightHosp) %>% 
+  summarise(count = n()) %>% 
+  gt()
+```
+
+```{r q1_hist}
+
+ggplot(nhanes2, aes(x = overnightHosp)) +
+  geom_histogram(bins = 7) +
+  theme_classic()
 
 ```
 
+The frequency table shows most of the data do not have an overnight hospital stay.  The histogram tells the same story.  There is a large tail to the data showing the skewness.
+
+# 2. What is the median age of respondents? What are the median ages for those who do and do not have a child in the home?
+
+```{r q2}
+
+median(nhanes2$RIDAGEYR)
+
+
+nhanes2 %>% 
+  group_by(children) %>% 
+  summarise(count = n(),
+            median = median(RIDAGEYR))
 
 
 
+
+```
+
+The median age for all respondents is 27.  The median age for those with children is 14 and without children is 59.
+
+# 3.	What is the average waist circumference (in inches) for those who had 6+ overnight hospital stays in the past year?
+
+
+```{r q3}
+
+nhanes2 %>% 
+  group_by(overnightHosp) %>% 
+  summarize(count = n(),
+            waist = mean(waistin, na.rm = TRUE)) %>% 
+  gt()
+
+
+
+```
+
+The average waist size (in inches) for 6 overnight stays is 36.841 inches.
 
 
 
