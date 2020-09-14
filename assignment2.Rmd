@@ -24,7 +24,7 @@ library(readxl)
 library(rlang)
 ```
 
-# Read in the Data
+# Reading in the Data
 
 The first thing I needed to do was read the data in join as per the SAS script.  
 
@@ -51,7 +51,7 @@ tbl_summary(nhanes)
 The final, joined data had `r ncol(nhanes)` variables and `r nrow(nhanes)` observations.  A pretty massive dataset.
 
 
-# 1. Review the frequency table for the number of overnight hospital visits and a histogram,
+## 1. Review the frequency table for the number of overnight hospital visits and a histogram,
 what is this data and distribution telling you?
 
 ```{r q1_dataAndfreq}
@@ -88,7 +88,7 @@ ggplot(nhanes2, aes(x = overnightHosp)) +
 
 The frequency table shows most of the data do not have an overnight hospital stay.  The histogram tells the same story.  There is a large tail to the data showing the skewness.
 
-# 2. What is the median age of respondents? What are the median ages for those who do and do not have a child in the home?
+## 2. What is the median age of respondents? What are the median ages for those who do and do not have a child in the home?
 
 ```{r q2}
 
@@ -107,7 +107,7 @@ nhanes2 %>%
 
 The median age for all respondents is 27.  The median age for those with children is 14 and without children is 59.
 
-# 3.	What is the average waist circumference (in inches) for those who had 6+ overnight hospital stays in the past year?
+## 3.	What is the average waist circumference (in inches) for those who had 6+ overnight hospital stays in the past year?
 
 
 ```{r q3}
@@ -124,8 +124,148 @@ nhanes2 %>%
 
 The average waist size (in inches) for 6 overnight stays is 36.841 inches.
 
+## 4.	Create a cross-tabulation for the number of overnight hospital stays with race/ethnicity (RIDRETH3). 
+Which group had the lowest proportion on inpatients? The greatest proportion of high utilizers?
+
+```{r q4}
+
+nhanes2 %>% 
+  select(overnightHosp, RIDRETH3) %>% 
+  tbl_summary(by = RIDRETH3, percent = 'cell') %>% 
+  add_overall() %>% 
+  as_gt() %>% 
+  tab_header(title = "Table of overnighthosp by RIDRETH3") %>% 
+  tab_spanner(label = "RIDRETH3(Race/Hispanic origin w/ NH Asian)", columns = c(5:10))
+
+
+```
+
+The group with the lowest proportion of inpatients is group 7 (505 total).  The greatest proportion of was group 3 (3066 total).
+
+# Exploring Data
+
+Here is the code to replicate the EDA section before the questions.
+
+```{r EDA}
+
+hs15 <- read_sas("assignments/hs15ar1.sas7bdat")
+
+tbl_summary(hs15)
+
+hs15 %>% 
+  arrange(WSHOES) %>% 
+  head(n = 10) %>% 
+  gt()
+
+
+hs15 %>% 
+  arrange(desc(WSHOES)) %>% 
+  head(n = 10) %>% 
+  gt()
 
 
 
+```
+
+
+## 5. Run the proc means and interpret the descriptive statistics for weight without shoes
+and height in feet by gender (1=male and 2= female)
+
+```{r q5}
+
+hs15 %>% 
+  select(SEX01, WSHOES, HFEET) %>% 
+  group_by(SEX01) %>% 
+  summarize(across(everything(), list(mean = mean, sd = sd,
+                                      min = min, max = max,
+                                      median = median), 
+                   na.rm = TRUE)) # can add move if needed
+  
+
+
+```
+For the stats I was able to generate quickly, Sex 1 has a higher mean weight, smaller sd.  Sex 1 also has a higher mean for height but a larger sd, meaning the data may be more spread.  The min and max for weight and height are pretty similar.
+
+## 6. What are differences between 95% and 99% Confidence Intervals?  Report the CI's for both
+variables.  What does this mean, interpret the results
+
+```{r q6}
+
+hs15 %>%
+  select(SEX01, WSHOES, HFEET) %>%
+  group_by(SEX01) %>% 
+  summarize(lower95CI_WSHOES = gmodels::ci(WSHOES, na.rm = TRUE)[[2]],
+            upper95CI_WSHOES = gmodels::ci(WSHOES, na.rm = TRUE)[[3]],
+            lower99CI_WSHOES = gmodels::ci(WSHOES, confidence = 0.99, na.rm = TRUE)[[2]],
+            upper99CI_WSHOES = gmodels::ci(WSHOES, confidence = 0.99, na.rm = TRUE)[[3]],
+            lower95CI_HFEET = gmodels::ci(HFEET, na.rm = TRUE)[[2]],
+            upper95CI_HFEET = gmodels::ci(HFEET, na.rm = TRUE)[[3]],
+            lower99CI_HFEET = gmodels::ci(HFEET, confidence = 0.99, na.rm = TRUE)[[2]],
+            upper99CI_HFEET = gmodels::ci(HFEET, confidence = 0.99, na.rm = TRUE)[[3]]) %>% 
+  gt()
+
+```
+
+The difference between a 95% and 99% confidence interval is how wide the interval is and thus how likely you are to capture the data in the interval.  A 95% interval will, on average, exclude ~5% of the data and is thus narrower than a 99% interval which will only exclude ~1% of the data.
+
+## 7. Interpret the histogram, qqplot, ppplot, and boxplot on weight without shoes and gender. In
+addition a scatterplot on weight without shoes and BMI
+
+```{r q7}
+
+ggplot(hs15, aes(x = WSHOES)) +
+  geom_histogram() +
+  theme_classic() +
+  labs(
+    title = "Histogram of WSHOES Data"
+  )
+
+ggplot(hs15, aes(sample = WSHOES)) +
+  geom_qq() +
+  geom_qq_line() +
+  theme_classic() +
+  labs(
+    title = "QQ Plot of WSHOES Data"
+  )
+
+ggplot(hs15, aes(sample = WSHOES)) +
+  qqplotr::stat_pp_point() +
+  qqplotr::stat_pp_band() +
+  theme_classic() +
+  labs(
+    title = "PP Plot of WSHOES Data"
+  )
+
+
+ggplot(hs15, aes(y = WSHOES, group = as.factor(SEX01))) +
+  geom_boxplot() +
+  theme_classic() +
+  labs(
+    title = "Boxplot of WSHOES by SEX01"
+  )
+
+ggplot(hs15, aes(x = BMI, y = WSHOES)) +
+  geom_jitter() +
+  theme_classic() +
+  labs(
+    title = "Plot of WSHOES by BMI"
+  )
+
+
+ggplot(hs15, aes(x = BMI, y = WSHOES, color = as.factor(SEX01))) +
+  geom_jitter() +
+  theme_classic() +
+  labs(
+    title = "Plot of WSHOES by BMI Colored by SEX01"
+  )
+
+```
+
+
+The plots each show how the data is not normally distrubted but is close.  The histogram shows tailing, the qq and pp plots both show how the data diverage from the normal line.
+
+
+
+## 8. Run a correlation on weight without shoes, BMI, and age
 
 
