@@ -1,0 +1,78 @@
+---
+title: "Week2-Data Management"
+author: "Matthew Onimus"
+date: "9/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libs}
+library(tidyverse)
+library(haven)
+library(readxl)
+library(rlang)
+```
+
+# Read in the Data
+
+The first thing I needed to do was read the data in join as per the SAS script.  
+
+```{r readData}
+
+nhanesdemo <- read_sav("assignments/NHANES_2015_DEMO.sav") 
+nhanesbmx <- read_csv("assignments/NHANES_2015_BMX_I.csv")
+nhaneshosp <- read_excel("assignments/NHANES_2015_HUQ.xlsx")
+
+# note that all the data is not the same legnth
+
+nhanes <- nhanesdemo %>% 
+  left_join(nhanesbmx, by = "SEQN") %>% 
+  left_join(nhaneshosp, by = "SEQN")
+
+str(nhanes)
+
+
+
+
+```
+
+The final, joined data had `r ncol(nhanes)` variables and `r nrow(nhanes)` observations.  A pretty massive dataset.
+
+
+# 1. Review the frequency table for the number of overnight hospital visits and a histogram,
+what is this data and distribution telling you?
+
+```{r q1}
+
+unique(nhanes$HUQ071)
+
+nhanes2 <- nhanes %>% 
+  mutate(overnightHosp = ifelse(
+    huq071==7 | huq071==9 | huq071=.
+  ))
+
+ata nhanes2;
+	set nhanes;
+	*Start with the count as a default value.;
+	overnighthosp = HUD080;
+	*Denote the subjects who are missing the yes/no for any overnight stay.;
+	if huq071=7 | huq071=9 | huq071=. then overnighthosp=.;
+	*Denote the subjects who are yes but don't have a valid count.;
+	if huq071=1 & (HUD080=77777 | HUD080 = 99999) then overnighthosp=.;
+	*Finally, set the nos to 0.;
+	 if huq071=2 then overnighthosp=0;
+
+```
+
+
+
+
+
+
+
+
+
+
