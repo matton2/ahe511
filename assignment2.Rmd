@@ -266,4 +266,15 @@ The plots each show how the data is not normally distrubted but is close.  The h
 
 ## 8. Run a correlation on weight without shoes, BMI, and age
 
+```{r q8}
+
+q8Data <- hs15 %>% 
+  select(WSHOES, BMI, RESPAGE) %>% 
+  drop_na()
+
+cor(q8Data)
+
+
+
+```
 
