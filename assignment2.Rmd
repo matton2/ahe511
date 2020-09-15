@@ -9,6 +9,9 @@ output:
       collapse: true
       smooth_scrolling: true
     code_folding: show
+  pdf_document:
+    toc: true
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
@@ -51,8 +54,7 @@ tbl_summary(nhanes)
 The final, joined data had `r ncol(nhanes)` variables and `r nrow(nhanes)` observations.  A pretty massive dataset.
 
 
-## 1. Review the frequency table for the number of overnight hospital visits and a histogram,
-what is this data and distribution telling you?
+## 1. Review the frequency table for the number of overnight hospital visits and a histogram, what is this data and distribution telling you?
 
 ```{r q1_dataAndfreq}
 
@@ -124,8 +126,7 @@ nhanes2 %>%
 
 The average waist size (in inches) for 6 overnight stays is 36.841 inches.
 
-## 4.	Create a cross-tabulation for the number of overnight hospital stays with race/ethnicity (RIDRETH3). 
-Which group had the lowest proportion on inpatients? The greatest proportion of high utilizers?
+## 4.	Create a cross-tabulation for the number of overnight hospital stays with race/ethnicity (RIDRETH3). Which group had the lowest proportion on inpatients? The greatest proportion of high utilizers?
 
 ```{r q4}
 
@@ -168,8 +169,7 @@ hs15 %>%
 ```
 
 
-## 5. Run the proc means and interpret the descriptive statistics for weight without shoes
-and height in feet by gender (1=male and 2= female)
+## 5. Run the proc means and interpret the descriptive statistics for weight without shoes and height in feet by gender (1=male and 2= female)
 
 ```{r q5}
 
@@ -186,8 +186,7 @@ hs15 %>%
 ```
 For the stats I was able to generate quickly, Sex 1 has a higher mean weight, smaller sd.  Sex 1 also has a higher mean for height but a larger sd, meaning the data may be more spread.  The min and max for weight and height are pretty similar.
 
-## 6. What are differences between 95% and 99% Confidence Intervals?  Report the CI's for both
-variables.  What does this mean, interpret the results
+## 6. What are differences between 95% and 99% Confidence Intervals?  Report the CI's for both variables.  What does this mean, interpret the results
 
 ```{r q6}
 
@@ -208,8 +207,7 @@ hs15 %>%
 
 The difference between a 95% and 99% confidence interval is how wide the interval is and thus how likely you are to capture the data in the interval.  A 95% interval will, on average, exclude ~5% of the data and is thus narrower than a 99% interval which will only exclude ~1% of the data.
 
-## 7. Interpret the histogram, qqplot, ppplot, and boxplot on weight without shoes and gender. In
-addition a scatterplot on weight without shoes and BMI
+## 7. Interpret the histogram, qqplot, ppplot, and boxplot on weight without shoes and gender. In addition a scatterplot on weight without shoes and BMI
 
 ```{r q7}
 
