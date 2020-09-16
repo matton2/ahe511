@@ -1,21 +1,22 @@
 ---
 title: "Week2-Data Management"
 author: "Matthew Onimus"
-date: "r lubridate::today()"
+date: "`r lubridate::today()`"
 output: 
+  pdf_document:
+    latex_engine: pdflatex
+    toc: true
+    number_sections: true
   html_document:
     toc: true
     toc_float:
       collapse: true
       smooth_scrolling: true
     code_folding: show
-  pdf_document:
-    toc: true
-    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ```{r libs}
@@ -25,6 +26,7 @@ library(gt)
 library(haven)
 library(readxl)
 library(rlang)
+library(corrplot)
 ```
 
 # Reading in the Data
@@ -274,7 +276,9 @@ q8Data <- hs15 %>%
 
 cor(q8Data)
 
+corrplot(cor(q8Data), method = 'ellipse')
+
 
 
 ```
-
+As can be inferred from the plot or taken directly from the matrix, it is clear there is a strong correlation with BMI and weight without shoes.  There is a very week correlation with weight without shoes and age and no correlation with BMI and age.
