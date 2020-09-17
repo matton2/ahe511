@@ -1,4 +1,0 @@
-
-! dyld: Library not loaded: /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib
-!   Referenced from: /usr/local/Cellar/miktex/2.9.6350/lib/libMiKTeX209-core.6344.dylib
-!   Reason: image not found

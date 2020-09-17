@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {1}Reading in the Data}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}1. Review the frequency table for the number of overnight hospital visits and a histogram, what is this data and distribution telling you?}{8}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}2. What is the median age of respondents? What are the median ages for those who do and do not have a child in the home?}{9}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}3. What is the average waist circumference (in inches) for those who had 6+ overnight hospital stays in the past year?}{10}{subsection.1.3}
+\contentsline {subsection}{\numberline {1.4}4. Create a cross-tabulation for the number of overnight hospital stays with race/ethnicity (RIDRETH3). Which group had the lowest proportion on inpatients? The greatest proportion of high utilizers?}{10}{subsection.1.4}
+\contentsline {section}{\numberline {2}Exploring Data}{11}{section.2}
+\contentsline {subsection}{\numberline {2.1}5. Run the proc means and interpret the descriptive statistics for weight without shoes and height in feet by gender (1=male and 2= female)}{26}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}6. What are differences between 95\% and 99\% Confidence Intervals? Report the CI's for both variables. What does this mean, interpret the results}{26}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}7. Interpret the histogram, qqplot, ppplot, and boxplot on weight without shoes and gender. In addition a scatterplot on weight without shoes and BMI}{27}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}8. Run a correlation on weight without shoes, BMI, and age}{32}{subsection.2.4}

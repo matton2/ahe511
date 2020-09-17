@@ -7,6 +7,7 @@ output:
     latex_engine: pdflatex
     toc: true
     number_sections: true
+    keep_tex: true
   html_document:
     toc: true
     toc_float:
@@ -137,7 +138,7 @@ nhanes2 %>%
   tbl_summary(by = RIDRETH3, percent = 'cell') %>% 
   add_overall() %>% 
   as_gt() %>% 
-  tab_header(title = "Table of overnighthosp by RIDRETH3") %>% 
+  #tab_header(title = "Table of overnighthosp by RIDRETH3") %>% 
   tab_spanner(label = "RIDRETH3(Race/Hispanic origin w/ NH Asian)", columns = c(5:10))
 
 
