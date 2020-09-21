@@ -10,6 +10,7 @@ output:
     keep_tex: true
   html_document:
     toc: true
+    toc_depth: 3
     toc_float:
       collapse: true
       smooth_scrolling: true
@@ -54,6 +55,8 @@ tbl_summary(nhanes)
 
 ```
 
+
+
 The final, joined data had `r ncol(nhanes)` variables and `r nrow(nhanes)` observations.  A pretty massive dataset.
 
 
@@ -91,6 +94,8 @@ ggplot(nhanes2, aes(x = overnightHosp)) +
 
 ```
 
+### Answer:
+
 The frequency table shows most of the data do not have an overnight hospital stay.  The histogram tells the same story.  There is a large tail to the data showing the skewness.
 
 ## 2. What is the median age of respondents? What are the median ages for those who do and do not have a child in the home?
@@ -110,6 +115,8 @@ nhanes2 %>%
 
 ```
 
+### Answer:
+
 The median age for all respondents is 27.  The median age for those with children is 14 and without children is 59.
 
 ## 3.	What is the average waist circumference (in inches) for those who had 6+ overnight hospital stays in the past year?
@@ -127,6 +134,8 @@ nhanes2 %>%
 
 ```
 
+### Answer:
+
 The average waist size (in inches) for 6 overnight stays is 36.841 inches.
 
 ## 4.	Create a cross-tabulation for the number of overnight hospital stays with race/ethnicity (RIDRETH3). Which group had the lowest proportion on inpatients? The greatest proportion of high utilizers?
@@ -143,6 +152,8 @@ nhanes2 %>%
 
 
 ```
+
+### Answer:
 
 The group with the lowest proportion of inpatients is group 7 (505 total).  The greatest proportion of was group 3 (3066 total).
 
@@ -187,6 +198,9 @@ hs15 %>%
 
 
 ```
+
+### Answer:
+
 For the stats I was able to generate quickly, Sex 1 has a higher mean weight, smaller sd.  Sex 1 also has a higher mean for height but a larger sd, meaning the data may be more spread.  The min and max for weight and height are pretty similar.
 
 ## 6. What are differences between 95% and 99% Confidence Intervals?  Report the CI's for both variables.  What does this mean, interpret the results
@@ -207,6 +221,8 @@ hs15 %>%
   gt()
 
 ```
+
+### Answer:
 
 The difference between a 95% and 99% confidence interval is how wide the interval is and thus how likely you are to capture the data in the interval.  A 95% interval will, on average, exclude ~5% of the data and is thus narrower than a 99% interval which will only exclude ~1% of the data.
 
@@ -262,9 +278,9 @@ ggplot(hs15, aes(x = BMI, y = WSHOES, color = as.factor(SEX01))) +
 
 ```
 
+### Answer:
 
-The plots each show how the data is not normally distrubted but is close.  The histogram shows tailing, the qq and pp plots both show how the data diverage from the normal line.
-
+The histogram, qq, and pp plots show data that are approximately normally distrubted, with a slight tail.  The boxplot shows the distrubtion and spread of the data about the same.  The scatter plots show a data that seems to be correlated together both for the entire population and when grouped by sex.  
 
 
 ## 8. Run a correlation on weight without shoes, BMI, and age
@@ -282,4 +298,8 @@ corrplot(cor(q8Data), method = 'ellipse')
 
 
 ```
+
+### Answer:
+
+
 As can be inferred from the plot or taken directly from the matrix, it is clear there is a strong correlation with BMI and weight without shoes.  There is a very week correlation with weight without shoes and age and no correlation with BMI and age.
