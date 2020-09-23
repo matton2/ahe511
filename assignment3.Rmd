@@ -1,0 +1,120 @@
+---
+title: "Week3-Basic Tests"
+author: "Matthew Onimus"
+date: "9/22/2020"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapse: true
+      smooth_scrolling: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(haven)
+library(readxl)
+library(rlang)
+library(corrplot)
+```
+
+# Read in Data 
+
+```{r readData}
+
+hiit <- read_sav("assignments/BasicTests_HIITMAX.sav")
+
+
+```
+
+
+# Question 1
+
+The HIITMAX study was a randomized controlled trial (RCT) run by David comparing the effects of high- versus moderate-intensity on the body composition and physical fitness of 28 overweight young men in the Birmingham area. The measured variables in the dataset have two versions reflecting the longitudinal design: a baseline value ( BL) and a final follow-up value ( F). Because both interventions involved putting previously sedentary subjects onto exercise regimens, David is interested if there was an overall change in respiratory fitness (measured by V O2,max) from baseline to follow-up. Test the investigator’s hypothesis using the data.
+
+## Question/Answer 1a
+
+What test is appropriate for this data and what are the null and alternative hypotheses?
+
+**The appropiate test for this data is a paired t-test.  The null hypotheses is that there is no change in VO_2 max from baseline.  The alternative hypotheses is there is a change from baseline for the VO_2 max.**
+
+## Question/Answer 1b
+
+What are the sample means of V O2,max pre- and post-intervention? 
+
+```{r 1b}
+
+meanBL <- mean(hiit$VO2peak_BL)
+
+meanBL
+
+meanF <- mean(hiit$VO2peak_F)
+
+meanF
+
+```
+
+**The mean pre-interventation is `r paste0(round(meanBL, 2))`.**
+
+**The mean post-intervention is `r paste0(round(meanF, 2))`.**
+
+## Question/Answer 1c
+
+What is the sample mean of the change in V O2,max from baseline to follow-up?
+
+**The sample mean change from baseline to follow is `r round(meanF - meanBL,2)`.**
+
+## Question/Answer 1d
+
+What is the two-tailed p-value associated with that test statistic?
+
+```{r 1d}
+
+q1T <- t.test(hiit$VO2peak_BL, hiit$VO2peak_F, paired = TRUE, alternative = 'two')
+
+print(q1T)
+
+```
+
+**The two-sided p-value for the test statistic is `r q1T$p.value`.** 
+
+## Question/Answer 1e
+
+Write a sentence summarizing this result.
+
+**With a p-value of `r q1T$p.value`, the results indicate that there is a difference between the post and pre treatment measurements.**
+
+# Question 2
+
+The primary purpose of the study was to test for whether the different exercise plans had a different effect on the subjects. That is, is there a ‘difference of differences’ for VO2,max between the HIIT and MIT groups? Test this hypothesis using the data. (Hint: The within-subject change scores for V O2,max were not included in the dataset, but may be calculated using the data step.)
+
+## Question/Answer 2a
+
+What test is appropriate for this data and what are the null and alternative hypotheses?
+
+
+## Question/Answer 2b
+
+What is the average change in V O2,max for the MIT group? For HIIT?
+
+```{r 2b}
+
+q2 <- hiit %>% 
+  mutate(vo2Difference = VO2peak_F-VO2peak_BL) %>% 
+  group_by(treatment) %>% 
+  select(-ID) %>% 
+  summarise(across(.cols = everything(), .fns = list(mean = mean, sd = sd)))
+
+```
+
+The average change in VO_2 max for the MIT group is `r q2$
+
+

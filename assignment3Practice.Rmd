@@ -1,0 +1,117 @@
+---
+title: "Practice Question Week 3"
+author: "Matthew Onimus"
+date: "9/22/2020"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapse: true
+      smooth_scrolling: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libs, echo=FALSE, warning = FALSE, message = FALSE}
+library(readxl)
+```
+
+# Read in the Data
+
+Read in the data using the `readXL` package.
+
+
+```{r troutData}
+trout <- read_excel("practice/BasicTestPractice1.xlsx", sheet = 'trout')
+```
+
+# Main Question
+
+Norma is doing a survey of the Brook Trout (Pennsylvania’s state fish) to see if environmental disturbance by humans has impacted the length of trout. She has done catch and release on 30 trout at different spots along a long river, measuring their length (in inches) and tagging them to prevent measuring the same fish twice. Traditionally, brook trout had an average length of 11 inches, but there are concerns that pollution has stunted their growth. Test the hypothesis that the average length of brook trout is different from the historical reference of 11”. 
+
+## Question A
+
+What test is appropriate for this data?
+
+### Answer A
+
+The appropiate test for this data is a one-sample t-test.
+
+## Question B
+
+What are the null and alternative hypotheses? 
+
+### Answer B
+
+The null hypotheses is that the there *is no* difference between the historical mean (11") and the new sample's mean.
+
+THe alternative hypotheses is that there *is a* difference between the historical mean (11") and the new sample's mean.
+
+## Question C
+
+What is the sample mean?
+
+### Answer C
+
+```{r mean}
+
+meanLength <- mean(trout$Length)
+
+meanLength
+
+```
+ The mean length of the population is `r paste0(round(meanLength, 2), '"')`.
+ 
+ ## Question D
+ 
+ What is the standard error of the sample mean? 
+ 
+ ### Answer X
+ 
+```{r stdEr}
+
+stdEr <- sd(trout$Length)/sqrt(length(trout$Length))
+  
+stdEr
+
+```
+
+ The standard error of the mean is `r paste0(round(stdEr, 2), '"')`.
+
+## Question E
+
+ What is the test statistic?
+ 
+ ### Answer E
+ 
+```{r tTets}
+
+t <- t.test(trout$Length, mu = 11, alternative = 'two')
+
+print(t)
+
+```
+ 
+ The test statistic from a two sided t-test is `r t$statistic`.
+
+## Question F
+
+What is the two-tailed p-value associated with that test statistic? 
+
+### Answer F
+
+The two-tailed p-value from the test is `r t$p.value`.
+
+## Question G
+
+Write a sentence summarizing this result. 
+
+### Answer F
+
+Based on the t-test value of `r t$statistic` and the p-value of `r t$p.value`, the sample mean is different than the historical mean.
+
+
