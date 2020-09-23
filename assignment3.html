@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
 <meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Matthew Onimus" />
@@ -68,6 +68,8 @@ overflow: auto;
 margin-left: 2%;
 position: fixed;
 border: 1px solid #ccc;
+webkit-border-radius: 6px;
+moz-border-radius: 6px;
 border-radius: 6px;
 }
 
@@ -95,14 +97,9 @@ font-size: 12px;
 .tocify-subheader .tocify-subheader {
 text-indent: 30px;
 }
+
 .tocify-subheader .tocify-subheader .tocify-subheader {
 text-indent: 40px;
-}
-.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
-text-indent: 50px;
-}
-.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
-text-indent: 60px;
 }
 
 .tocify .tocify-item > a, .tocify .nav-list .nav-header {
@@ -506,13 +503,13 @@ float: none;
 
           item.append($("<a/>", {
 
-            "html": self.html()
+            "text": self.text()
 
           }));
 
         } else {
 
-          item.html(self.html());
+          item.text(self.text());
 
         }
 
@@ -1282,13 +1279,13 @@ window.initializeCodeFolding = function(show) {
   var currentIndex = 1;
 
   // select all R code blocks
-  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
   rCodeBlocks.each(function() {
 
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
-    show = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
-    if (show) div.addClass('in');
+    if (show)
+      div.addClass('in');
     var id = 'rcode-643E0F36' + currentIndex++;
     div.attr('id', id);
     $(this).before(div);
@@ -1389,7 +1386,9 @@ h6 {
 </style>
 
 
+</head>
 
+<body>
 
 <style type="text/css">
 .main-container {
@@ -1403,6 +1402,7 @@ code {
 }
 img {
   max-width:100%;
+  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -1419,6 +1419,8 @@ summary {
 </style>
 
 
+
+<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -1464,7 +1466,6 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
-  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -1477,12 +1478,56 @@ summary {
 }
 </style>
 
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
 <!-- code folding -->
 <style type="text/css">
 .code-folding-btn { margin-bottom: 4px; }
 </style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
 
 
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <style type="text/css">
 
@@ -1496,12 +1541,6 @@ summary {
 }
 }
 
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
 
 .toc-content {
   padding-left: 30px;
@@ -1537,6 +1576,8 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -1545,16 +1586,6 @@ div.tocify {
 
 
 </style>
-
-
-
-</head>
-
-<body>
-
-
-<div class="container-fluid main-container">
-
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -1581,8 +1612,8 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Week3-Basic Tests</h1>
-<h4 class="author">Matthew Onimus</h4>
-<h4 class="date">9/22/2020</h4>
+<h4 class="author"><em>Matthew Onimus</em></h4>
+<h4 class="date"><em>9/22/2020</em></h4>
 
 </div>
 
@@ -1603,7 +1634,13 @@ div.tocify {
 <h2>Question/Answer 1b</h2>
 <p>What are the sample means of V O2,max pre- and post-intervention?</p>
 <pre class="r"><code>meanBL &lt;- mean(hiit$VO2peak_BL)
-meanF &lt;- mean(hiit$VO2peak_F)</code></pre>
+
+meanBL</code></pre>
+<pre><code>## [1] 35.58696</code></pre>
+<pre class="r"><code>meanF &lt;- mean(hiit$VO2peak_F)
+
+meanF</code></pre>
+<pre><code>## [1] 37.53913</code></pre>
 <p><strong>The mean pre-interventation is 35.59.</strong></p>
 <p><strong>The mean post-intervention is 37.54.</strong></p>
 </div>
@@ -1615,7 +1652,7 @@ meanF &lt;- mean(hiit$VO2peak_F)</code></pre>
 <div id="questionanswer-1d" class="section level2">
 <h2>Question/Answer 1d</h2>
 <p>What is the two-tailed p-value associated with that test statistic?</p>
-<pre class="r"><code>q1T &lt;- t.test(hiit$VO2peak_BL, hiit$VO2peak_F, paired = TRUE, alternative = 'two')
+<pre class="r"><code>q1T &lt;- t.test(hiit$VO2peak_BL, hiit$VO2peak_F, paired = TRUE, alternative = &#39;two&#39;)
 
 print(q1T)</code></pre>
 <pre><code>## 
@@ -1630,11 +1667,41 @@ print(q1T)</code></pre>
 ## mean of the differences 
 ##               -1.952174</code></pre>
 <p><strong>The two-sided p-value for the test statistic is 0.0163798.</strong></p>
-<div id="questionanswer-1e" class="section level3">
-<h3>Question/Answer 1e</h3>
+</div>
+<div id="questionanswer-1e" class="section level2">
+<h2>Question/Answer 1e</h2>
 <p>Write a sentence summarizing this result.</p>
 <p><strong>With a p-value of 0.0163798, the results indicate that there is a difference between the post and pre treatment measurements.</strong></p>
 </div>
+</div>
+<div id="question-2" class="section level1">
+<h1>Question 2</h1>
+<p>The primary purpose of the study was to test for whether the different exercise plans had a different effect on the subjects. That is, is there a ‘difference of differences’ for VO2,max between the HIIT and MIT groups? Test this hypothesis using the data. (Hint: The within-subject change scores for V O2,max were not included in the dataset, but may be calculated using the data step.)</p>
+<div id="questionanswer-2a" class="section level2">
+<h2>Question/Answer 2a</h2>
+<p>What test is appropriate for this data and what are the null and alternative hypotheses?</p>
+</div>
+<div id="questionanswer-2b" class="section level2">
+<h2>Question/Answer 2b</h2>
+<p>What is the average change in V O2,max for the MIT group? For HIIT?</p>
+<pre class="r"><code>q2 &lt;- hiit %&gt;% 
+  mutate(vo2Difference = VO2peak_F-VO2peak_BL) %&gt;% 
+  group_by(treatment) %&gt;% 
+  select(-ID) %&gt;% 
+  summarise(across(.cols = everything(), .fns = list(mean = mean, sd = sd)))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<p><strong>The average change in VO_2 max for the MIT group is 3.4.</strong></p>
+<p><strong>The average change in VO_2 max for the HIIT group is 0.8384615.</strong></p>
+</div>
+<div id="questionanswer-2c" class="section level2">
+<h2>Question/Answer 2c</h2>
+<p>What are the standard deviations for the changes within each group?</p>
+<p><strong>The sd of change in VO_2 max for the MIT group is 3.3603075.</strong></p>
+<p><strong>The sd of change in VO_2 max for the HIIT group is 3.4970913.</strong></p>
+</div>
+<div id="questionanswer-2d" class="section level2">
+<h2>Question/Answer 2d</h2>
+<p>What is the two-tailed p-value associated with that test statistic?</p>
 </div>
 </div>
 
@@ -1656,54 +1723,6 @@ $(document).ready(function () {
 });
 
 
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("show" === "show");
-});
-</script>
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

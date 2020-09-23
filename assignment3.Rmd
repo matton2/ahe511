@@ -32,6 +32,8 @@ library(corrplot)
 
 hiit <- read_sav("assignments/BasicTests_HIITMAX.sav")
 
+smoking <- read_excel("assignments/BasicTests_Smoking.xlsx")
+
 
 ```
 
@@ -100,6 +102,8 @@ The primary purpose of the study was to test for whether the different exercise 
 
 What test is appropriate for this data and what are the null and alternative hypotheses?
 
+**The appropiate test for this data is a two sample t-test.  The null hypotheses is that there is no change in VO_2 difference between the treatment groups.  The alternative hypotheses is there is a change VO_2 difference between the treatment groups.**
+
 
 ## Question/Answer 2b
 
@@ -115,6 +119,141 @@ q2 <- hiit %>%
 
 ```
 
-The average change in VO_2 max for the MIT group is `r q2$
+**The average change in VO_2 max for the MIT group is `r round(q2$vo2Difference_mean[[2]],2)`.**
+
+**The average change in VO_2 max for the HIIT group is `r round(q2$vo2Difference_mean[[1]],2)`.**
+
+## Question/Answer 2c
+
+What are the standard deviations for the changes within each group?
+
+**The sd of change in VO_2 max for the MIT group is `r round(q2$vo2Difference_sd[[2]],2)`.**
+
+**The sd of change in VO_2 max for the HIIT group is `r round(q2$vo2Difference_sd[[1]],2)`.**
+
+## Question/Answer 2d
+
+What is the two-tailed p-value associated with that test statistic?
+
+```{r 2d}
+
+q2d <- hiit %>% 
+  mutate(vo2Difference = VO2peak_F-VO2peak_BL)
+
+# note by setting var.equal to TRUE, we are using pooled variance here
+q2d_tTest <- t.test(vo2Difference ~ treatment, data = q2d, var.equal = TRUE)
+
+q2d_tTesta <- t.test(vo2Difference ~ treatment, data = q2d)
+  
+q2d_tTest
+
+q2d_tTesta
+
+
+```
+
+**The two-tailed p-value associated with the test statistic is `r round(q2d_tTest$p.value,4)`.**
+
+## Question/Answer 2e
+
+Write a sentence or two summarizing this result. 
+
+## TODP
+
+
+# Question 3
+
+As these young men were overweight or obese at baseline, David is curious if they may also have issues with high blood pressure. Specifically, he is interested if their systolic blood pressure at baseline differs from the national average SBP of 120 mmHg. Test this hypothesis using the data.
+
+## Question/Answer 3a
+
+What test is appropriate for this data and what are the null and alternative hypotheses?
+
+**The appropiate test for this data is a one-sample t-test.  The null hypotheses is that there is no change in systolic blood pressure from the national average of 120 mmHg.  The alternative hypotheses is there is a difference from the national average of 120 mmHg.**
+
+## Question/Answer 3b
+
+What is the sample mean?
+
+```{r 3b}
+
+mean3b <- mean(hiit$sbp_bl)
+
+
+```
+
+**The sample mean for sbp_bl is `r round(mean3b,1)` mmHg.**
+
+## Question/Answer 3c
+
+What is the standard error of the sample mean?
+
+```{r 3c}
+
+stdEr3c <- sd(hiit$sbp_bl)/sqrt(length(hiit$sbp_bl))
+
+```
+
+
+**The standard error of the mean for sbp_bl is `r round(stdEr3c,2)`.**
+
+## Question/Answer 3d
+
+What is the two-tailed p-value associated with that test statistic?
+
+```{r 3d}
+
+tTest3d <- t.test(hiit$sbp_bl, mu = 120, alternative = 'two')
+
+tTest3d
+
+
+```
+
+**The two-tailed p-value associated with the test statistic is `r round(tTest3d$p.value,4)`.**
+
+## Question/Answer 3e
+
+Write a sentence summarizing this result.
+
+**Write something here**
+
+# Question 4
+
+In the BasicTests Smoking.xlsx file are the results from a case-control study of 1418 individuals with or without lung cancer, separated by self-reported current smoking status.
+
+## Question/Answer 4a
+
+What would our outcome variable be? Our exposure variable? What is the requirement to use the chi-square test? Does this sample meet that requirement?
+
+**The outcome variable is LungCancer.  The exposure variable is Smoking.  The requirement for a chi-square test is a relationship between two categorical variables, in this case, LungCancer and Smoking.  Yes, this sample meets the requirement**
+
+
+## Question/Answer 4b
+
+What is the odds ratio for smokers versus nonsmokers? (In that order!) Interpret the odds ratio.
+
+```{r 4b}
+
+chisq.test(smoking)
+
+
+```
+
+
+## Question/Answer 4c
+
+Whatis the test statistic for a Pearson chi-square test ofindependence? What is the p-value associated with this test statistic?
+
+## Question/Answer 4d
+
+What is the 95% confidence interval for the odds ratio in part d? (Again, the odds for smokers to the odds for nonsmokers.)
+
+
+## Question?Ansewer 4e
+
+Write a sentence or two interpreting the results of your analysis, mentioning both the test and interval estimate.
+
+
 
 
