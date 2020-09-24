@@ -141,13 +141,11 @@ q2d <- hiit %>%
   mutate(vo2Difference = VO2peak_F-VO2peak_BL)
 
 # note by setting var.equal to TRUE, we are using pooled variance here
-q2d_tTest <- t.test(vo2Difference ~ treatment, data = q2d, var.equal = TRUE)
+q2d_tTest <- t.test(vo2Difference ~ treatment, data = q2d, var.equal = FALSE)
 
-q2d_tTesta <- t.test(vo2Difference ~ treatment, data = q2d)
-  
+
 q2d_tTest
 
-q2d_tTesta
 
 
 ```
@@ -158,7 +156,7 @@ q2d_tTesta
 
 Write a sentence or two summarizing this result. 
 
-## TODP
+## TODO
 
 
 # Question 3
@@ -226,16 +224,13 @@ In the BasicTests Smoking.xlsx file are the results from a case-control study of
 
 What would our outcome variable be? Our exposure variable? What is the requirement to use the chi-square test? Does this sample meet that requirement?
 
-**The outcome variable is LungCancer.  The exposure variable is Smoking.  The requirement for a chi-square test is a relationship between two categorical variables, in this case, LungCancer and Smoking.  Yes, this sample meets the requirement**
-
+**The outcome variable is LungCancer.  The exposure variable is Smoking.  The requirement for a chi-square test is a relationship between two categorical variables, in this case, LungCancer and Smoking.  Yes, this sample meets the requirement.**
 
 ## Question/Answer 4b
 
 What is the odds ratio for smokers versus nonsmokers? (In that order!) Interpret the odds ratio.
 
 ```{r 4b}
-
-chisq.test(smoking)
 
 
 ```
