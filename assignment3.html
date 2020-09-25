@@ -1496,7 +1496,7 @@ $(document).ready(function () {
 </style>
 <script>
 $(document).ready(function () {
-  window.initializeCodeFolding("show" === "show");
+  window.initializeCodeFolding("hide" === "show");
 });
 </script>
 
@@ -1620,7 +1620,9 @@ div.tocify {
 
 <div id="read-in-data" class="section level1">
 <h1>Read in Data</h1>
-<pre class="r"><code>hiit &lt;- read_sav(&quot;assignments/BasicTests_HIITMAX.sav&quot;)</code></pre>
+<pre class="r"><code>hiit &lt;- read_sav(&quot;assignments/BasicTests_HIITMAX.sav&quot;)
+
+smoking &lt;- read_excel(&quot;assignments/BasicTests_Smoking.xlsx&quot;)</code></pre>
 </div>
 <div id="question-1" class="section level1">
 <h1>Question 1</h1>
@@ -1628,19 +1630,18 @@ div.tocify {
 <div id="questionanswer-1a" class="section level2">
 <h2>Question/Answer 1a</h2>
 <p>What test is appropriate for this data and what are the null and alternative hypotheses?</p>
-<p><strong>The appropiate test for this data is a paired t-test. The null hypotheses is that there is no change in VO_2 max from baseline. The alternative hypotheses is there is a change from baseline for the VO_2 max.</strong></p>
+<p><strong>The appropiate test for this data is a paired t-test. The null hypotheses is that there is no change in VO<sub>2</sub> max from baseline. The alternative hypotheses is there is a change from baseline for the VO<sub>2</sub> max.</strong></p>
 </div>
 <div id="questionanswer-1b" class="section level2">
 <h2>Question/Answer 1b</h2>
 <p>What are the sample means of V O2,max pre- and post-intervention?</p>
 <pre class="r"><code>meanBL &lt;- mean(hiit$VO2peak_BL)
 
-meanBL</code></pre>
-<pre><code>## [1] 35.58696</code></pre>
-<pre class="r"><code>meanF &lt;- mean(hiit$VO2peak_F)
+#meanBL
 
-meanF</code></pre>
-<pre><code>## [1] 37.53913</code></pre>
+meanF &lt;- mean(hiit$VO2peak_F)
+
+#meanF</code></pre>
 <p><strong>The mean pre-interventation is 35.59.</strong></p>
 <p><strong>The mean post-intervention is 37.54.</strong></p>
 </div>
@@ -1654,32 +1655,22 @@ meanF</code></pre>
 <p>What is the two-tailed p-value associated with that test statistic?</p>
 <pre class="r"><code>q1T &lt;- t.test(hiit$VO2peak_BL, hiit$VO2peak_F, paired = TRUE, alternative = &#39;two&#39;)
 
-print(q1T)</code></pre>
-<pre><code>## 
-##  Paired t-test
-## 
-## data:  hiit$VO2peak_BL and hiit$VO2peak_F
-## t = -2.5991, df = 22, p-value = 0.01638
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -3.5098787 -0.3944691
-## sample estimates:
-## mean of the differences 
-##               -1.952174</code></pre>
+#print(q1T)</code></pre>
 <p><strong>The two-sided p-value for the test statistic is 0.0163798.</strong></p>
 </div>
 <div id="questionanswer-1e" class="section level2">
 <h2>Question/Answer 1e</h2>
 <p>Write a sentence summarizing this result.</p>
-<p><strong>With a p-value of 0.0163798, the results indicate that there is a difference between the post and pre treatment measurements.</strong></p>
+<p><strong>From the sample of 23, there is evidence of an overall positive change in respiratory fitness from baseline based on a mean difference of 1.95 and a <span class="math inline">\(p\)</span>-value of 0.0163798 at a signifance level of <span class="math inline">\(\alpha\)</span> = 0.05.</strong></p>
 </div>
 </div>
 <div id="question-2" class="section level1">
 <h1>Question 2</h1>
-<p>The primary purpose of the study was to test for whether the different exercise plans had a different effect on the subjects. That is, is there a ‘difference of differences’ for VO2,max between the HIIT and MIT groups? Test this hypothesis using the data. (Hint: The within-subject change scores for V O2,max were not included in the dataset, but may be calculated using the data step.)</p>
+<p>The primary purpose of the study was to test for whether the different exercise plans had a different effect on the subjects. That is, is there a ‘difference of differences’ for VO<sub>2</sub>,max between the HIIT and MIT groups? Test this hypothesis using the data. (Hint: The within-subject change scores for VO<sub>2</sub>,max were not included in the dataset, but may be calculated using the data step.)</p>
 <div id="questionanswer-2a" class="section level2">
 <h2>Question/Answer 2a</h2>
 <p>What test is appropriate for this data and what are the null and alternative hypotheses?</p>
+<p><strong>The appropiate test for this data is a two sample t-test. The null hypotheses is that there is no change in VO<sub>2</sub> difference between the treatment groups. The alternative hypotheses is there is a change VO<sub>2</sub> difference between the treatment groups.</strong></p>
 </div>
 <div id="questionanswer-2b" class="section level2">
 <h2>Question/Answer 2b</h2>
@@ -1689,19 +1680,116 @@ print(q1T)</code></pre>
   group_by(treatment) %&gt;% 
   select(-ID) %&gt;% 
   summarise(across(.cols = everything(), .fns = list(mean = mean, sd = sd)))</code></pre>
-<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<p><strong>The average change in VO_2 max for the MIT group is 3.4.</strong></p>
-<p><strong>The average change in VO_2 max for the HIIT group is 0.8384615.</strong></p>
+<p><strong>The average change in VO<sub>2</sub> max for the MIT group is 3.4.</strong></p>
+<p><strong>The average change in VO<sub>2</sub> max for the HIIT group is 0.84.</strong></p>
 </div>
 <div id="questionanswer-2c" class="section level2">
 <h2>Question/Answer 2c</h2>
 <p>What are the standard deviations for the changes within each group?</p>
-<p><strong>The sd of change in VO_2 max for the MIT group is 3.3603075.</strong></p>
-<p><strong>The sd of change in VO_2 max for the HIIT group is 3.4970913.</strong></p>
+<p><strong>The sd of change in VO<sub>2</sub> max for the MIT group is 3.36.</strong></p>
+<p><strong>The sd of change in VO<sub>2</sub> max for the HIIT group is 3.5.</strong></p>
 </div>
 <div id="questionanswer-2d" class="section level2">
 <h2>Question/Answer 2d</h2>
 <p>What is the two-tailed p-value associated with that test statistic?</p>
+<pre class="r"><code>q2d &lt;- hiit %&gt;% 
+  mutate(vo2Difference = VO2peak_F-VO2peak_BL)
+
+# note by setting var.equal to TRUE, we are using pooled variance here
+q2d_tTest &lt;- t.test(vo2Difference ~ treatment, data = q2d, var.equal = FALSE)
+
+
+#q2d_tTest</code></pre>
+<p><strong>The two-tailed p-value associated with the test statistic is 0.090288.</strong></p>
+</div>
+<div id="questionanswer-2e" class="section level2">
+<h2>Question/Answer 2e</h2>
+<p>Write a sentence or two summarizing this result.</p>
+<p><strong>From the sample of 23 individuals, there is evidence that the average VO<sub>2</sub> difference between the MIT treatment group (3.4, sd = 3.36) and the HIIT treatment group (0.84, sd = 3.5) are not different. More specifically, there is an observed average difference of 2.56 in subjects who underwent the MIT treatment compared with HIIT subjects (t<sub>19.8893203</sub>= -1.78, <span class="math inline">\(p\)</span>-value = 0.090288), at a significance level of <span class="math inline">\(\alpha\)</span> = 0.05.</strong></p>
+</div>
+</div>
+<div id="question-3" class="section level1">
+<h1>Question 3</h1>
+<p>As these young men were overweight or obese at baseline, David is curious if they may also have issues with high blood pressure. Specifically, he is interested if their systolic blood pressure at baseline differs from the national average SBP of 120 mmHg. Test this hypothesis using the data.</p>
+<div id="questionanswer-3a" class="section level2">
+<h2>Question/Answer 3a</h2>
+<p>What test is appropriate for this data and what are the null and alternative hypotheses?</p>
+<p><strong>The appropiate test for this data is a one-sample t-test. The null hypotheses is that there is no change in systolic blood pressure from the national average of 120 mmHg. The alternative hypotheses is there is a difference from the national average of 120 mmHg.</strong></p>
+</div>
+<div id="questionanswer-3b" class="section level2">
+<h2>Question/Answer 3b</h2>
+<p>What is the sample mean?</p>
+<pre class="r"><code>mean3b &lt;- mean(hiit$sbp_bl)</code></pre>
+<p><strong>The sample mean for sbp_bl is 129.2 mmHg.</strong></p>
+</div>
+<div id="questionanswer-3c" class="section level2">
+<h2>Question/Answer 3c</h2>
+<p>What is the standard error of the sample mean?</p>
+<pre class="r"><code>stdEr3c &lt;- sd(hiit$sbp_bl)/sqrt(length(hiit$sbp_bl))</code></pre>
+<p><strong>The standard error of the mean for sbp_bl is 2.33.</strong></p>
+</div>
+<div id="questionanswer-3d" class="section level2">
+<h2>Question/Answer 3d</h2>
+<p>What is the two-tailed p-value associated with that test statistic?</p>
+<pre class="r"><code>tTest3d &lt;- t.test(hiit$sbp_bl, mu = 120, alternative = &#39;two&#39;)
+
+#tTest3d</code></pre>
+<p><strong>The two-tailed p-value associated with the test statistic is 6.90828310^{-4}.</strong></p>
+</div>
+<div id="questionanswer-3e" class="section level2">
+<h2>Question/Answer 3e</h2>
+<p>Write a sentence summarizing this result.</p>
+<p><strong>From the sample of 23 individuals, there is evidence that the average difference between the samples SBP (129.2 mmHg, SE = 2.33) and the national average of 120 mmHg are different. More specifically, there is an observed average difference of 9.2 mmHg in subjects from this study compared to the national average (t<sub>22</sub>= 3.94, <span class="math inline">\(p\)</span>-value = 6.90828310^{-4}), at a significance level of <span class="math inline">\(\alpha\)</span> = 0.05.</strong></p>
+</div>
+</div>
+<div id="question-4" class="section level1">
+<h1>Question 4</h1>
+<p>In the BasicTests Smoking.xlsx file are the results from a case-control study of 1418 individuals with or without lung cancer, separated by self-reported current smoking status.</p>
+<div id="questionanswer-4a" class="section level2">
+<h2>Question/Answer 4a</h2>
+<p>What would our outcome variable be? Our exposure variable? What is the requirement to use the chi-square test? Does this sample meet that requirement?</p>
+<p><strong>The outcome variable is LungCancer. The exposure variable is Smoking. The requirement for a chi-square test is a relationship between two categorical variables, in this case, LungCancer and Smoking. Yes, this sample meets the requirement.</strong></p>
+</div>
+<div id="questionanswer-4b" class="section level2">
+<h2>Question/Answer 4b</h2>
+<p>What is the odds ratio for smokers versus nonsmokers? (In that order!) Interpret the odds ratio.</p>
+<pre class="r"><code># have to rearrange this data to be used in r odds ratio and chi sq functions
+smokingWide &lt;- smoking %&gt;% 
+  pivot_wider(names_from = LungCancer, values_from = Count) %&gt;% 
+  arrange(Smoking) %&gt;% 
+  select(Smoking, Control, Case) %&gt;% 
+  column_to_rownames(var = &quot;Smoking&quot;)
+
+OR &lt;- oddsratio.small(x= as.matrix(smokingWide))
+
+#OR</code></pre>
+<p><strong>The odds ratio for smokers versus nonsmokers is 2.83. Which means a smoker is 2.83 times more likely to develop lung cancer than a non-smoker.</strong></p>
+<p><strong>NOTE: this calculated odds ratio is different than the SAS calculated ratio of 2.97. I did not dig into either functions code so I cannot give a reason why at the moment.</strong></p>
+</div>
+<div id="questionanswer-4c" class="section level2">
+<h2>Question/Answer 4c</h2>
+<p>Whatis the test statistic for a Pearson chi-square test ofindependence? What is the p-value associated with this test statistic?</p>
+<pre class="r"><code>sasChi &lt;- chisq.test(smokingWide, simulate.p.value = TRUE) # replicates Chi-square in SAS
+
+#sasChi
+
+contChi &lt;- chisq.test(smokingWide) # replicates continuity adh chi square
+
+#contChi</code></pre>
+<p><strong>The test statistic is 19.13. The assocaited <span class="math inline">\(p\)</span>-value is 4.997510^{-4}.</strong></p>
+</div>
+<div id="questionanswer-4d" class="section level2">
+<h2>Question/Answer 4d</h2>
+<p>What is the 95% confidence interval for the odds ratio in part d? (Again, the odds for smokers to the odds for nonsmokers.)</p>
+<p><strong>The 95% confidence interval is (1.7683, 4.852))</strong></p>
+</div>
+<div id="questionansewer-4e" class="section level2">
+<h2>Question?Ansewer 4e</h2>
+<p>Write a sentence or two interpreting the results of your analysis, mentioning both the test and interval estimate.</p>
+<pre class="r"><code>RR &lt;- riskratio(as.matrix(smokingWide))
+
+#RR</code></pre>
+<p><strong>In these data, we observed a significant association between lung cancer and smoking compared to non-smokers (<span class="math inline">\(\chi^2\)</span> = 19.13, <span class="math inline">\(p\)</span>-value = 4.997510^{-4}). The estimated increase in risk of developing lung cancer is 196% (95% CI: 135%, 284%) in these results.</strong></p>
 </div>
 </div>
 

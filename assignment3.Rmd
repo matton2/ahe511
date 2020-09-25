@@ -2,18 +2,21 @@
 title: "Week3-Basic Tests"
 author: "Matthew Onimus"
 date: "9/22/2020"
-output: 
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
-    toc: true
+    code_folding: hide
+    toc: yes
     toc_depth: 3
     toc_float:
-      collapse: true
-      smooth_scrolling: true
-    code_folding: show
+      collapse: yes
+      smooth_scrolling: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
 ```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
@@ -23,7 +26,7 @@ library(gt)
 library(haven)
 library(readxl)
 library(rlang)
-library(corrplot)
+library(epitools)
 ```
 
 # Read in Data 
@@ -46,7 +49,7 @@ The HIITMAX study was a randomized controlled trial (RCT) run by David comparing
 
 What test is appropriate for this data and what are the null and alternative hypotheses?
 
-**The appropiate test for this data is a paired t-test.  The null hypotheses is that there is no change in VO_2 max from baseline.  The alternative hypotheses is there is a change from baseline for the VO_2 max.**
+**The appropiate test for this data is a paired t-test.  The null hypotheses is that there is no change in VO~2~ max from baseline.  The alternative hypotheses is there is a change from baseline for the VO~2~ max.**
 
 ## Question/Answer 1b
 
@@ -56,11 +59,11 @@ What are the sample means of V O2,max pre- and post-intervention?
 
 meanBL <- mean(hiit$VO2peak_BL)
 
-meanBL
+#meanBL
 
 meanF <- mean(hiit$VO2peak_F)
 
-meanF
+#meanF
 
 ```
 
@@ -82,7 +85,7 @@ What is the two-tailed p-value associated with that test statistic?
 
 q1T <- t.test(hiit$VO2peak_BL, hiit$VO2peak_F, paired = TRUE, alternative = 'two')
 
-print(q1T)
+#print(q1T)
 
 ```
 
@@ -92,17 +95,17 @@ print(q1T)
 
 Write a sentence summarizing this result.
 
-**With a p-value of `r q1T$p.value`, the results indicate that there is a difference between the post and pre treatment measurements.**
+**From the sample of `r NROW(hiit)`, there is evidence of an overall positive change in respiratory fitness from baseline based on a mean difference of `r round(meanF - meanBL,2)` and a $p$-value of `r q1T$p.value` at a signifance level of $\alpha$ = 0.05.**
 
 # Question 2
 
-The primary purpose of the study was to test for whether the different exercise plans had a different effect on the subjects. That is, is there a ‘difference of differences’ for VO2,max between the HIIT and MIT groups? Test this hypothesis using the data. (Hint: The within-subject change scores for V O2,max were not included in the dataset, but may be calculated using the data step.)
+The primary purpose of the study was to test for whether the different exercise plans had a different effect on the subjects. That is, is there a ‘difference of differences’ for VO~2~,max between the HIIT and MIT groups? Test this hypothesis using the data. (Hint: The within-subject change scores for VO~2~,max were not included in the dataset, but may be calculated using the data step.)
 
 ## Question/Answer 2a
 
 What test is appropriate for this data and what are the null and alternative hypotheses?
 
-**The appropiate test for this data is a two sample t-test.  The null hypotheses is that there is no change in VO_2 difference between the treatment groups.  The alternative hypotheses is there is a change VO_2 difference between the treatment groups.**
+**The appropiate test for this data is a two sample t-test.  The null hypotheses is that there is no change in VO~2~ difference between the treatment groups.  The alternative hypotheses is there is a change VO~2~ difference between the treatment groups.**
 
 
 ## Question/Answer 2b
@@ -119,17 +122,17 @@ q2 <- hiit %>%
 
 ```
 
-**The average change in VO_2 max for the MIT group is `r round(q2$vo2Difference_mean[[2]],2)`.**
+**The average change in VO~2~ max for the MIT group is `r round(q2$vo2Difference_mean[[2]],2)`.**
 
-**The average change in VO_2 max for the HIIT group is `r round(q2$vo2Difference_mean[[1]],2)`.**
+**The average change in VO~2~ max for the HIIT group is `r round(q2$vo2Difference_mean[[1]],2)`.**
 
 ## Question/Answer 2c
 
 What are the standard deviations for the changes within each group?
 
-**The sd of change in VO_2 max for the MIT group is `r round(q2$vo2Difference_sd[[2]],2)`.**
+**The sd of change in VO~2~ max for the MIT group is `r round(q2$vo2Difference_sd[[2]],2)`.**
 
-**The sd of change in VO_2 max for the HIIT group is `r round(q2$vo2Difference_sd[[1]],2)`.**
+**The sd of change in VO~2~ max for the HIIT group is `r round(q2$vo2Difference_sd[[1]],2)`.**
 
 ## Question/Answer 2d
 
@@ -144,19 +147,19 @@ q2d <- hiit %>%
 q2d_tTest <- t.test(vo2Difference ~ treatment, data = q2d, var.equal = FALSE)
 
 
-q2d_tTest
+#q2d_tTest
 
 
 
 ```
 
-**The two-tailed p-value associated with the test statistic is `r round(q2d_tTest$p.value,4)`.**
+**The two-tailed p-value associated with the test statistic is `r round(q2d_tTest$p.value,6)`.**
 
 ## Question/Answer 2e
 
 Write a sentence or two summarizing this result. 
 
-## TODO
+**From the sample of `r NROW(hiit)` individuals, there is evidence that the average VO~2~ difference between the MIT treatment group (`r round(q2$vo2Difference_mean[[2]],2)`, sd = `r round(q2$vo2Difference_sd[[2]],2)`) and the HIIT treatment group (`r round(q2$vo2Difference_mean[[1]],2)`, sd = `r round(q2$vo2Difference_sd[[1]],2)`) are not different.  More specifically, there is an observed average difference of `r round(q2$vo2Difference_mean[[2]],2) -  round(q2$vo2Difference_mean[[1]],2)` in subjects who underwent the MIT treatment compared with HIIT subjects (t~`r q2d_tTest$parameter`~= `r round(q2d_tTest$statistic,2)`, $p$-value = `r round(q2d_tTest$p.value,6)`), at a significance level of $\alpha$ = 0.05.**
 
 
 # Question 3
@@ -203,18 +206,18 @@ What is the two-tailed p-value associated with that test statistic?
 
 tTest3d <- t.test(hiit$sbp_bl, mu = 120, alternative = 'two')
 
-tTest3d
+#tTest3d
 
 
 ```
 
-**The two-tailed p-value associated with the test statistic is `r round(tTest3d$p.value,4)`.**
+**The two-tailed p-value associated with the test statistic is `r round(tTest3d$p.value,10)`.**
 
 ## Question/Answer 3e
 
 Write a sentence summarizing this result.
 
-**Write something here**
+**From the sample of `r NROW(hiit)` individuals, there is evidence that the average difference between the samples SBP (`r round(mean3b,1)` mmHg, SE = `r round(stdEr3c,2)`) and the national average of 120 mmHg are different.  More specifically, there is an observed average difference of `r round(mean3b,1)-120` mmHg in subjects from this study compared to the national average (t~`r tTest3d$parameter`~= `r round(tTest3d$statistic,2)`, $p$-value = `r round(tTest3d$p.value,10)`), at a significance level of $\alpha$ = 0.05.**
 
 # Question 4
 
@@ -232,22 +235,64 @@ What is the odds ratio for smokers versus nonsmokers? (In that order!) Interpret
 
 ```{r 4b}
 
+# have to rearrange this data to be used in r odds ratio and chi sq functions
+smokingWide <- smoking %>% 
+  pivot_wider(names_from = LungCancer, values_from = Count) %>% 
+  arrange(Smoking) %>% 
+  select(Smoking, Control, Case) %>% 
+  column_to_rownames(var = "Smoking")
+
+OR <- oddsratio.small(x= as.matrix(smokingWide))
+
+#OR
 
 ```
 
+**The odds ratio  for smokers versus nonsmokers is `r round(OR$measure[[2]],2)`.  Which means a smoker is `r round(OR$measure[[2]],2)` times more likely to develop lung cancer than a non-smoker.**
+
+**NOTE: this calculated odds ratio is different than the SAS calculated ratio of 2.97.  I did not dig into either functions code so I cannot give a reason why at the moment.**
 
 ## Question/Answer 4c
 
 Whatis the test statistic for a Pearson chi-square test ofindependence? What is the p-value associated with this test statistic?
 
+```{r 4c}
+
+sasChi <- chisq.test(smokingWide, simulate.p.value = TRUE) # replicates Chi-square in SAS
+
+#sasChi
+
+contChi <- chisq.test(smokingWide) # replicates continuity adh chi square
+
+#contChi
+
+
+
+
+```
+
+**The $\chi^2$ is `r round(sasChi$statistic, 2)`.  The assocaited $p$-value is `r round(sasChi$p.value,8)`.**
+
 ## Question/Answer 4d
 
 What is the 95% confidence interval for the odds ratio in part d? (Again, the odds for smokers to the odds for nonsmokers.)
+
+**The 95% confidence interval is (`r round(OR$measure[[4]], 4)`, `r round(OR$measure[[6]], 4)`))**
 
 
 ## Question?Ansewer 4e
 
 Write a sentence or two interpreting the results of your analysis, mentioning both the test and interval estimate.
+
+```{r 4e}
+
+RR <- riskratio(as.matrix(smokingWide))
+
+#RR
+
+```
+
+**In these data, we observed a significant association between lung cancer and smoking compared to non-smokers ($\chi^2$ = `r round(sasChi$statistic,2)`, $p$-value = `r round(sasChi$p.value,8)`).  The estimated increase in risk of developing lung cancer is `r round(RR$measure[[2]],2)*100`% (95% CI: `r round(RR$measure[[4]],2)*100`%, `r round(RR$measure[[6]],2)*100`%) in these results.**
 
 
 
