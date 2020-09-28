@@ -1,0 +1,147 @@
+---
+title: "Week4 - Assignment"
+author: "M. Onimus"
+date: "9/27/2020"
+output: 
+  html_document:
+      code_folding: hide
+      toc: yes
+      toc_depth: 3
+      toc_float:
+        collapse: yes
+        smooth_scrolling: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(gtsummary)
+library(haven)
+library(readxl)
+library(rlang)
+library(rstatix)
+```
+
+# Read in Data 
+
+```{r readData}
+
+school <- read_sav("assignments/BasicTests_School.sav") %>% 
+  mutate(School = as.factor(School))
+
+
+```
+
+
+# Question 1
+
+Chichi and David are still working on their study of what children are eating for lunch at school. In the BasicTests School.sav file are 8 random samples of meals from 3 schools (hence 24 observations total). The data represents fat content in grams from meals served at the schools. The two are interested in whether there is a difference in fat content of the lunches between schools. Please test that hypothesis using an ANOVA.
+
+## Question/Answer 1a
+
+What are the null and alternative hypotheses? 
+
+**H~0~: $\mu_1=\mu_2, \mu_1=\mu_3, \mu_2=\mu_3$**
+
+**H~A~: $\mu_i \neq \mu_m$ for some $i\neq m$**
+
+## Question/Answer 1b
+
+What is the average fat content in the lunches of each of the schools?
+
+```{r 1b}
+
+sumSchool <- school %>% 
+  group_by(School) %>% 
+  summarize(mean = mean(FatContent))
+
+sumSchool %>% 
+  gt() %>% 
+  tab_header(
+    title = "Means of FatContent by School"
+  )
+
+
+
+```
+
+**The mean fat content of school 1 is `r sumSchool$mean[[1]]`, school 2 is `r sumSchool$mean[[2]]`, and school 3 is `r sumSchool$mean[[3]]`.**
+
+## Question/Answer 1c
+
+What is the test statistic? What are the degrees of freedom?
+
+```{r 1c}
+
+
+
+a1 <- aov(FatContent ~ School, data = school)
+
+aSum <- summary(a1) # it is tough to pull apart the anova model, easier with the summary
+
+
+pander::pander(anova(a1))
+
+
+
+
+```
+
+**The F-value test statistics is `r aSum[[1]][["F value"]][[1]]` and the degrees of freedom are `r aSum[[1]][["Df"]][[1]]`.**
+
+## Question/Answer 1d
+
+What is the p-value associated with that test statistic? 
+
+**The associated $p$-value with the test statistic is `r aSum[[1]][["Pr(>F)"]][[1]]`.**
+
+## Question/Answer 1e
+
+What can you say about the model assumption of homogeneous variances between groups? Please include any relevant plots or descriptive/inferential statistics as appropriate to support your discussion.
+
+```{r 1f}
+
+levene <- levene_test(FatContent ~ School, data = school)
+
+ggplot(school, aes(x = School, y = FatContent)) +
+  geom_boxplot(aes(fill = School), alpha = 0.3) +
+  geom_jitter() +
+  theme_classic()
+  
+
+
+```
+
+**The Levene F-value test statistic from the Levene test was `r levene$statistic` with a corresponding $p$-value of `r levene$p`.  Indicating we can assume consistent variance.  This is also demostrated by the boxplot showing the distrubtion for each school is approximately the same.**
+
+**NOTE: these results are different from what is produced in SAS and I am not sure why yet.**
+
+## Question/Answer 1f
+
+Are post-hoc tests appropriate? If so, please report on which schools differ in fat
+content, using a Bonferroni correction. 
+
+```{r 1g}
+
+pwt <- school %>% 
+  pairwise_t_test(FatContent ~ School, p.adjust.method = "bonferroni")
+
+pwt
+
+```
+
+**The $p$-value of `r aSum[[1]][["Pr(>F)"]][[1]]` from the ANOVA indicated that no group was significantly different; an post-hoc analysis may not be needed as we have answered the main question already. As a practice, I have completed a pairwise t test regardless.  As the ANOVA indicated, there is no significant differences between any school in terms of fat content.**
+
+
+## Question/Answer 1g
+
+Write up your interpretation of the results of your analysis.
+
+****
+

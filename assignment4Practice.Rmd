@@ -1,0 +1,140 @@
+---
+title: "Week4 - Practice"
+author: "M. Onimus"
+date: "9/27/2020"
+output: 
+  html_document:
+      code_folding: hide
+      toc: yes
+      toc_depth: 3
+      toc_float:
+        collapse: yes
+        smooth_scrolling: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(gtsummary)
+library(haven)
+library(readxl)
+library(rlang)
+library(rstatix)
+```
+
+# Read in Data 
+
+```{r readData}
+
+hosp <- read_excel("practice/BasicTestPractice1.xlsx", sheet = "Hospital")
+
+
+```
+
+
+# Question 1
+
+Heather is interested in the emergency department (ED) wait times at three hospitals (M, N, and O) within the Jefferson system. To check if there were any differences between the three EDs, the wait times of 6 emergency patients were randomly selected from each hospital. 
+
+## Question/Answer 1a
+
+What test is appropriate for this data?
+
+**Since we are comparing multiple groups, the ANOVA would be the appropiate test for this data.  Additionally, we may need to use a pairwise t-test to compare each group.**
+
+## Question/Answer 1b
+
+What are the null and alternative hypotheses? 
+
+**H~0~: $\mu_1=\mu_2, \mu_1=\mu_3, \mu_2=\mu_3$**
+
+**H~A~: $\mu_i \neq \mu_m$ for some $i\neq m$**
+
+## Question/Answer 1c
+
+What is the mean wait time for each of the three EDs?
+
+```{r 1c}
+
+hosp %>% 
+  group_by(Hospital) %>% 
+  summarize(mean = mean(WaitTime)) %>% 
+  gt() %>% 
+  tab_header(
+    title = "Means of Waittime by Hospital"
+  )
+
+
+
+```
+
+## Question/Answer 1d
+
+What is the test statistic? What are the degrees of freedom?
+
+```{r 1d}
+
+
+
+a1 <- aov(WaitTime ~ Hospital, data = hosp)
+
+aSum <- summary(a1) # it is tough to pull apart the anova model, easier with the summary
+
+
+pander::pander(anova(a1))
+
+
+
+
+```
+
+**The F-value test statistics is `r aSum[[1]][["F value"]][[1]]` and the degrees of freedom are `r aSum[[1]][["Df"]][[1]]`.**
+
+## Question/Answer 1e
+
+What is the p-value associated with that test statistic? 
+
+**The associated $p$-value with the test statistic is `r aSum[[1]][["Pr(>F)"]][[1]]`.**
+
+## Question/Answer 1f
+
+Check the homoscedasticity assumption of the test. 
+
+```{r 1f}
+
+levene <- car::leveneTest(WaitTime ~ Hospital, data = hosp)
+
+
+```
+
+The Levene F-value test statistic from the Levene test was `r levene[2][[1]][[1]]` with a corresponding $p$-value of `r levene[3][[1]][[1]]`.  Indicating we can assume consistent variance.
+
+## Question/Answer 1g
+
+Was there a difference between the wait times of the three EDs? If so, do a post-hoc
+test with a Bonferroni correction. 
+
+```{r 1g}
+
+pwt <- hosp %>% 
+  pairwise_t_test(WaitTime ~ Hospital, p.adjust.method = "bonferroni")
+
+pwt
+
+```
+
+**There was a statistical difference in waittime from the anova. The output from the pairwise t.test using the Bonferroni method indicates significant differences between hospitals M and O and N and O.  Hospitals M and N waittimes are not significantly different.**
+
+
+## Question/Answer 1h
+
+Write a few sentences summarizing the results of your analysis. 
+
+**There is evidence that the mean waittime in at least one of the hospitals differs significantly from that of the others. ($F_2 = 36.71, p = 0.0000017$) at a $\alpha$=0.05 level.  The post-hoc pairwise t test using the Bonferroni method indiciated that hospital O is significantly different from M ($p$-value = `r pwt$p.adj[[2]]`) and N ($p$-value = `r pwt$p.adj[[3]]`) which are not significantly different ($p$-value = `r pwt$p.adj[[1]]`) from each other.  **
+
