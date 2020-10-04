@@ -16,7 +16,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 ```
 
-
 ```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(gtsummary)
@@ -28,7 +27,7 @@ library(rlang)
 library(rstatix)
 ```
 
-# Read in Data 
+# Read in Data
 
 ```{r readData}
 
@@ -38,18 +37,17 @@ school <- read_sav("assignments/BasicTests_School.sav") %>%
 
 ```
 
-
 # Question 1
 
 Chichi and David are still working on their study of what children are eating for lunch at school. In the BasicTests School.sav file are 8 random samples of meals from 3 schools (hence 24 observations total). The data represents fat content in grams from meals served at the schools. The two are interested in whether there is a difference in fat content of the lunches between schools. Please test that hypothesis using an ANOVA.
 
 ## Question/Answer 1a
 
-What are the null and alternative hypotheses? 
+What are the null and alternative hypotheses?
 
-**H~0~: $\mu_1=\mu_2, \mu_1=\mu_3, \mu_2=\mu_3$**
+**H~0~:** $\mu_1=\mu_2, \mu_1=\mu_3, \mu_2=\mu_3$
 
-**H~A~: $\mu_i \neq \mu_m$ for some $i\neq m$**
+**H~A~:** $\mu_i \neq \mu_m$ for some $i\neq m$
 
 ## Question/Answer 1b
 
@@ -93,13 +91,13 @@ pander::pander(anova(a1))
 
 ```
 
-**The F-value test statistics is `r aSum[[1]][["F value"]][[1]]` and the degrees of freedom are `r aSum[[1]][["Df"]][[1]]`.**
+**The F-value test statistics is `r aSum[[1]][[4]][[1]]` and the degrees of freedom are `r aSum[[1]][["Df"]][[1]]`.**
 
 ## Question/Answer 1d
 
-What is the p-value associated with that test statistic? 
+What is the p-value associated with that test statistic?
 
-**The associated $p$-value with the test statistic is `r aSum[[1]][["Pr(>F)"]][[1]]`.**
+**The associated $p$-value with the test statistic is `r aSum[[1]][[5]][[1]]`.**
 
 ## Question/Answer 1e
 
@@ -118,14 +116,13 @@ ggplot(school, aes(x = School, y = FatContent)) +
 
 ```
 
-**The Levene F-value test statistic from the Levene test was `r levene$statistic` with a corresponding $p$-value of `r levene$p`.  Indicating we can assume consistent variance.  This is also demostrated by the boxplot showing the distrubtion for each school is approximately the same.**
+**The Levene F-value test statistic from the Levene test was `r levene$statistic` with a corresponding $p$-value of `r levene$p`. Indicating we can assume consistent variance. This is also demostrated by the boxplot showing the distrubtion for each school is approximately the same.**
 
 **NOTE: these results are different from what is produced in SAS and I am not sure why yet.**
 
 ## Question/Answer 1f
 
-Are post-hoc tests appropriate? If so, please report on which schools differ in fat
-content, using a Bonferroni correction. 
+Are post-hoc tests appropriate? If so, please report on which schools differ in fat content, using a Bonferroni correction.
 
 ```{r 1g}
 
@@ -136,12 +133,12 @@ pwt
 
 ```
 
-**The $p$-value of `r aSum[[1]][["Pr(>F)"]][[1]]` from the ANOVA indicated that no group was significantly different; an post-hoc analysis may not be needed as we have answered the main question already. As a practice, I have completed a pairwise t test regardless.  As the ANOVA indicated, there is no significant differences between any school in terms of fat content.**
-
+**The $p$-value of `r aSum[[1]][[5]][[1]]` from the ANOVA indicated that no group was significantly different; an post-hoc analysis may not be needed as we have answered the main question already. As a practice, I have completed a pairwise t test regardless. As the ANOVA indicated, there is no significant differences between any school in terms of fat content.**
 
 ## Question/Answer 1g
 
 Write up your interpretation of the results of your analysis.
 
-****
+**In this study of what children are eating for lunch at school, we observed no significant differences between the fat content of 3 different schools (F-value = `r aSum[[1]][[4]][[1]]`, $p$-value of `r aSum[[1]][[5]][[1]]).`**
 
+------------------------------------------------------------------------
