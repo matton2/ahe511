@@ -2,18 +2,21 @@
 title: "Week4 - Assignment"
 author: "M. Onimus"
 date: "9/27/2020"
-output: 
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
   html_document:
-      code_folding: hide
-      toc: yes
-      toc_depth: 3
-      toc_float:
-        collapse: yes
-        smooth_scrolling: yes
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapse: yes
+      smooth_scrolling: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
 ```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
@@ -60,10 +63,7 @@ sumSchool <- school %>%
   summarize(mean = mean(FatContent))
 
 sumSchool %>% 
-  gt() %>% 
-  tab_header(
-    title = "Means of FatContent by School"
-  )
+  gt()
 
 
 
@@ -139,6 +139,6 @@ pwt
 
 Write up your interpretation of the results of your analysis.
 
-**In this study of what children are eating for lunch at school, we observed no significant differences between the fat content of 3 different schools (F-value = `r aSum[[1]][[4]][[1]]`, $p$-value of `r aSum[[1]][[5]][[1]]).`**
+**In this study of what children are eating for lunch at school, we observed no significant differences between the fat content of 3 different schools (F-value = `r aSum[[1]][[4]][[1]]`, $p$-value of `r aSum[[1]][[5]][[1]]`).**
 
 ------------------------------------------------------------------------
