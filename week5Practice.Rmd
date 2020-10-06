@@ -1,0 +1,142 @@
+---
+title: "week5Practice"
+author: "M. Onimus"
+date: "10/6/2020"
+output:
+  html_document: 
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapse: yes
+      smooth_scrolling: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(gtsummary)
+library(haven)
+library(readxl)
+library(rlang)
+library(rstatix)
+```
+
+# Read in Data
+
+```{r readData}
+
+week5 <- read_sav("practice/GLM_practice.sav") 
+
+```
+
+# Question 1
+
+Lou has completed a pilot study based on Caslake et al. (2008, Am. J.of Clin. Nutrition, 88(3): 618-629) to investigate the effects genotype on cardiovascular biomarker response to fish oils. Eighty African-American adults, aged 30–45 years, were prospectively recruited according to age, sex, and APOE genotype. Half of the participants were randomly assigned to ingest three 700 mg EPA+DHA/d (700FO) capsules per day for an 8-week intervention period. The other subjects consumed control oil capsules on the same regimen. 
+
+He is first interested in whether there is an association between subject age and HDL levels at baseline (HDL PRE). 
+
+## Question/Answer 1a
+
+What is the correlation between age and baseline HDL?
+
+```{r 1a}
+
+lm <- lm(HDL_PRE ~ age, data = week5)
+
+
+
+#lm
+
+```
+
+**The correlation between baseline HDL and age is `r lm$coefficients[[2]]`.**
+
+
+## Question/Answer 1b
+
+Write out the regression equation for the prediction of baseline HDL using
+subject age. 
+
+**$HDL = \beta_0 + \beta_1*age$**
+
+## Question/Answer 1c
+
+What are the null and alternative hypotheses for the test for an association
+between age and HDL, using your model? 
+
+**$H_0:\beta_1 = 0$**
+**$H_1:\beta_1\neq0$**
+
+## Question/Answer 1d
+
+What is the estimated regression equation? Also, provide a plot of it against a
+scatter plot of the data. 
+
+**$HDL = 47.898 - 0.056*age$**
+
+```{r 1d}
+ggplot(week5, aes(x = age, y = HDL_PRE)) + 
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  theme_classic()
+
+```
+
+## Question/Answer 1e
+
+What are the results of inference about the association (Parameter Estimate table)? 
+
+```{r 1e}
+
+summary(lm)
+
+```
+
+The results of interference indicate that the two parameters are not signifcantly associated with each other ($t_1=-0.467, p = 0.642$) at an $\alpha=0.05$ level.
+
+## Question/Answer 1f
+
+How do the assumptions of linear regression hold up in this case? Use the
+appropriate plots to support your discussion. 
+
+```{r 1f}
+
+ggplot(data = NULL, aes(x = lm$fitted.values, y = lm$residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  labs(
+    x = "Predicted Value",
+    y = "Residual"
+  ) +
+  theme_classic()
+
+```
+
+**The residual/predicted plot above shows a pretty equal distrubution of points above and below 0 although there may be less points below 0.**
+
+```{r }
+
+ggplot(data = NULL, aes(sample = lm$residuals)) +
+  geom_qq() +
+  theme_classic()
+
+ggplot(data = NULL, aes(x = lm$residuals)) +
+  geom_histogram() +
+  theme_classic()
+
+
+```
+
+**The qqplot and the histogram of residuals both show distrubtions which seem to not be normal.  There is signifcant tailings at both ends of the qq plot and a number of modals present in the histogram.**
+
+## Question/Answer 1g
+
+Write a few sentences describing the results
+
+There is 
