@@ -139,4 +139,4 @@ ggplot(data = NULL, aes(x = lm$residuals)) +
 
 Write a few sentences describing the results
 
-**A correlation between HDL PRE and age was investigated using a linear regression.  With a correlation coefficent of -0.056 and a $p$-value of 0.642, there is no significant correlation between the two variables.  Additionally, the data failed to meet qqplot and histogram normality assumptions** 
+**A correlation between HDL PRE and age was investigated using a linear regression.  With a correlation coefficient of -0.056 and a $p$-value of 0.642, there is no significant correlation between the two variables.  Additionally, the data failed to meet qqplot and histogram normality assumptions** 
