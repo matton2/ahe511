@@ -1,0 +1,138 @@
+---
+title: "week5Homework"
+author: "M. Onimus"
+date: "10/8/2020"
+output:
+  html_document: 
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapse: yes
+      smooth_scrolling: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(gtsummary)
+library(haven)
+library(readxl)
+library(rlang)
+library(rstatix)
+```
+
+# Read in Data
+
+```{r readData}
+
+week5 <- read_sav("assignments/GLM_homework_phmc.sav") 
+
+```
+
+# Question 1
+
+David is hoping to come up with a linear model that can be used to predict a person’s BMI using a subset of the PHMC community health survey database. 
+
+We first wish to examine the relationship between BMI and age. 
+
+## Question/Answer 1a
+
+What is the correlation between age and BMI? 
+
+```{r 1a}
+
+lm <- lm(BMI ~ RESPAGE, data = week5)
+
+
+
+#lm
+
+```
+
+**The correlation between BMI and age is `r lm$coefficients[[2]]`.**
+
+
+## Question/Answer 1b
+
+Write out the regression equation for the prediction of BMI using subject age. 
+
+**$BMI = \beta_0 + \beta_1*age$**
+
+## Question/Answer 1c
+
+What are the null and alternative hypotheses for the test for an association between age and BMI, using your model?  
+
+**$H_0:\beta_1 = 0$**
+**$H_1:\beta_1\neq0$**
+
+## Question/Answer 1d
+
+What is the estimated regression equation? Also, provide a plot of it against a scatter plot of the data.  
+
+**$BMI = 27.7601 + 0.0043*age$**
+
+```{r 1d}
+ggplot(week5, aes(x = RESPAGE, y = BMI)) + 
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  theme_classic()
+
+```
+
+## Question/Answer 1e
+
+What are the results of inference about the association (parameter estimate table)?
+
+```{r 1e}
+
+summary(lm)
+
+```
+
+The results of interference indicate that the two parameters are not signifcantly associated with each other ($t_1=1.075, p = 0.282$) at an $\alpha=0.05$ level.
+
+## Question/Answer 1f
+
+How do the assumptions of linear regression hold up in this case? Use the appropriate plots to support your discussion.  
+
+```{r 1f}
+
+ggplot(data = NULL, aes(x = lm$fitted.values, y = lm$residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  labs(
+    x = "Predicted Value",
+    y = "Residual"
+  ) +
+  theme_classic()
+
+```
+
+**The residual/predicted plot above shows a pretty equal distrubution of points above and below 0 although there may be less points below 0.**
+
+```{r }
+
+ggplot(data = NULL, aes(sample = lm$residuals)) +
+  geom_qq() +
+  theme_classic()
+
+ggplot(data = NULL, aes(x = lm$residuals)) +
+  geom_histogram() +
+  theme_classic()
+
+
+```
+
+**The qqplot and the histogram of residuals both show distrubtions which seem to not be normal.  The qqplot looks closer to an exponential plot, not a straight line, and the histrogram shows tailing.**
+
+## Question/Answer 1g
+
+Write a few sentences describing the results. 
+
+**A correlation between BMI and age was investigated using a linear regression.  With a correlation coefficent of 0.0043 and a $p$-value of 0.282, there is no significant correlation between the two variables.  Additionally, the data failed to meet qqplot and histogram normality assumptions** 
