@@ -3,7 +3,10 @@ title: "week5Homework"
 author: "M. Onimus"
 date: "10/8/2020"
 output:
-  html_document: 
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
     code_folding: hide
     toc: yes
     toc_depth: 3
@@ -129,10 +132,10 @@ ggplot(data = NULL, aes(x = lm$residuals)) +
 
 ```
 
-**The qqplot and the histogram of residuals both show distrubtions which seem to not be normal.  The qqplot looks closer to an exponential plot, not a straight line, and the histrogram shows tailing.**
+**The qqplot and the histogram of residuals both show distrubtions which seem to not be normal.  The qqplot looks closer to an exponential plot as opposed to the expected straightline; the histrogram shows tailing.**
 
 ## Question/Answer 1g
 
 Write a few sentences describing the results. 
 
-**A correlation between BMI and age was investigated using a linear regression.  With a correlation coefficent of 0.0043 and a $p$-value of 0.282, there is no significant correlation between the two variables.  Additionally, the data failed to meet qqplot and histogram normality assumptions** 
+**A correlation between BMI and age was investigated using a linear regression.  With a correlation coefficent of 0.0043 and a $p$-value of 0.282, there is no significant correlation between the two variables.  Additionally, the data failed to meet qqplot and histogram normality assumptions.** 
