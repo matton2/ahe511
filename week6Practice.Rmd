@@ -1,0 +1,182 @@
+---
+title: "week6Practice"
+author: "M. Onimus"
+date: "10/14/2020"
+output:
+  html_document: 
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapse: yes
+      smooth_scrolling: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(gtsummary)
+library(haven)
+library(readxl)
+library(rlang)
+library(rstatix)
+library(ppcor)
+```
+
+# Read in Data
+
+```{r readData}
+
+week6 <- read_sav("practice/GLM_practice.sav") 
+
+```
+
+# Question 1
+
+Lou has completed a pilot study based on Caslake et al. (2008, Am. J.of Clin. Nutrition, 88(3): 618-629) to investigate the effects genotype on cardiovascular biomarker response to fish oils. Eighty African-American adults, aged 30–45 years, were prospectively recruited according to age, sex, and APOE genotype. Half of the participants were randomly assigned to ingest three 700 mg EPA+DHA/d (700FO) capsules per day for an 8-week intervention period. The other subjects consumed control oil capsules on the same regimen. The hypotheses of main interest was whether changes in HDL levels (HDL DIFF) were affected by Treatment (700FO vs Control) and APOE genotype, and whether the Treatment effect differed across APOE genotypes (Treatment x Genotype interaction). 
+
+After the above analysis, Lou is concerned about whether there could be confounding in the model. Thus, we want to see if the age-HDL relationship changes when we control for subject BMI. 
+
+## Question/Answer 1a
+
+What are the correlations between BMI and age and baseline HDL?
+
+```{r 1a}
+
+variables <- week6 %>% 
+  select(HDL_PRE, age, BMI)
+
+correlations <- cor(variables) 
+
+#correlations
+
+```
+
+**The correlation between baseline HDL and age is `r correlations[[1,2]]`.**
+**The correlation between baseline HDL and BMI is `r correlations[[1,3]]`.**
+**The correlation between age and BMI is `r correlations[[2,3]]`.**
+
+
+## Question/Answer 1b
+
+What is the partial correlations between age and baseline HDL, controlling for BMI?  
+
+```{r 1b}
+
+partial <- pcor.test(week6$HDL_PRE, week6$age, week6$BMI)
+
+```
+
+**The partial correlation between age and baseline HDL controlling for BMI is `r round(partial$estimate,2)`.**
+
+## Question/Answer 1c
+
+Write out the multiple regression equation for the prediction of baseline HDL using subject age and BMI.  
+
+**$HDL = a + \beta_1age + \beta_2BMI$**
+
+## Question/Answer 1d
+
+What are the null and alternative hypotheses for the test reported in the ANOVA table for your model? 
+
+**$H_0:\beta_1 = 0, \beta_2 = 0$**
+**$H_A:\beta_1 \neq 0 and/or \beta_2 \neq 0$**
+
+## Question/Answer 1e
+
+Is the above a valid test for an association between baseline HDL and subject age, controlling for BMI? Why or why not? 
+
+
+
+
+
+## Question/Answer 1f
+
+What are the results of inference about the association between baseline HDL and subject age, controlling for BMI? 
+
+```{r 1f}
+
+lm <- lm(HDL_PRE ~ age + BMI, data = week6)
+
+lm
+
+```
+
+**There is a weak, negative association (`r round(lm$coefficients[[2]],2)`) between age and baseline HDL when controlling for BMI**
+
+## Question/Answer 1g
+
+How do the assumptions of linear regression hold up in this case? Use the appropriate plots to support your discussion. 
+
+```{r 1ga}
+ggplot(data = NULL, aes(x = lm$fitted.values, y = lm$residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  labs(
+    x = "Predicted Value",
+    y = "Residual"
+  ) +
+  theme_classic()
+
+
+```
+
+**The residual/predicted plot above shows a pretty equal distrubution of points above and below 0 although there may be less points below 0.**
+
+```{r 1gb}
+
+ggplot(data = NULL, aes(sample = lm$residuals)) +
+  geom_qq() +
+  theme_classic()
+
+ggplot(data = NULL, aes(x = lm$residuals)) +
+  geom_histogram(bins = 10, ) +
+  theme_classic()
+
+
+```
+
+**The qqplot, while not completely linear, is not so egreious that I am worried.  The histogram shows a farily normal distubtion.**
+
+## Question/Answer 1h
+
+Write a few sentences describing the results.
+
+# Question 2
+
+For the primary analysis, we want to test if the treatment had an effect on the change in HDL over time (HDL DIFF).
+
+As a more sophisticated analysis, we are interested in whether APOE genotype interacts with the treatment to produce differential effects. We also wish to control for BMI to reduce the possible MSE and increase power. 
+
+## Question/Answer 2a
+
+What would be a simple test for this? Perform this test, and briefly report the results. 
+
+## Question/Answer 2b
+
+Write out the multiple regression equation for the prediction of the change in HDL using subject APOE genotype interacting with treatment, controlling for BMI. 
+
+## Question/Answer 2c
+
+What are the null and alternative hypotheses for the test of the treatment-by-APOE interaction term? 
+
+## Question/Answer 2d
+
+What are the results of inference about the treatment-by-APOE interaction, control- ling for BMI? 
+
+## Question/Answer 2e
+
+How do the assumptions of linear regression hold up in this case? Use the appropriate plots to support your discussion.
+
+## Question/Answer 2f
+
+If there was not a significant interaction, what is the test of the main effect of treatment? 
+
+## Question/Answer 2g
+
+Write a few sentences describing the results. 
