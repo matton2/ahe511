@@ -1,0 +1,124 @@
+---
+title: "week7Homework"
+author: "M. Onimus"
+date: "10/21/2020"
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapse: yes
+      smooth_scrolling: yes
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
+library(ppcor)
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(gtsummary)
+library(haven)
+library(readxl)
+library(rlang)
+library(rstatix)
+```
+
+# Read in Data
+
+```{r readData}
+
+week7 <- read_sav("assignments/Generalized_phmc.sav") %>% 
+  mutate(MENTAL3A = as.factor(MENTAL3A))
+
+
+```
+
+# Question 1
+
+We are interested in quantifying a possible association between a subject’s BMI and whether or not they have been diagnosed with a mental illness in this population. We also wish to control for age, sex, and race (white, black, and other) to account for some basic confounding.
+
+## Question/Answer 1a
+
+Given the above model, write out the null and alternative hypotheses for a test of the association between mental illness and BMI. 
+
+$log(\frac{\pi}{(1-\pi)}) = \beta_0 + \beta_1BMI + \beta_2Age + \beta_3Sex + \beta_4Race $
+
+$H_0: \beta_1 = 0 $
+$H_1: \beta_2 \neq 0 $
+
+
+## Question/Answer 1b
+
+What is the test statistic for the above test? What is its distribution and associated p-value?
+
+
+```{r 1b}
+
+lm <- glm(MENTAL3A ~ BMI + RESPAGE + SEX01 + Race, family = 'binomial', data = week7)
+
+# find the odds ratio using exp
+
+summary(lm)
+
+```
+
+
+**In SAS, the $\chi^2$ = 14.3347 with an associated p-value of 0.0002.**
+
+**In R, I am provided with a z-value of -3.618 with an associated p-value of 0.000296.**
+
+## Question/Answer 1c
+
+What are the null and alternative hypotheses for testing an association between age and kyphosis, using your logistic regression model? 
+
+$H_0:\beta_1 = 0$ 
+$H_A:\beta_1 \neq 0$
+
+## Question/Answer 1d
+
+What is the odds ratio for age, along with its 95% CI?
+
+```{r 1d}
+
+lm <- glm(Kyphosis ~ Age, family = 'binomial', data = week7)
+
+# find the odds ratio using exp
+
+odds <- exp(coefficients(lm))
+
+# or use another package to pull it out
+
+oddsEPI <- epiDisplay::logistic.display(lm)
+
+```
+
+**The odds ratio point estimate with the 95% CI is `r paste(oddsEPI$table[[1]])`.**
+
+
+## Question/Answer 1e
+
+What are the results of inference? Report the test statistic, its distribution, and the associated p-value. 
+```{r 1e}
+
+summary(lm)
+
+
+```
+
+**In SAS, the $\chi^2$ = 0.5393 with an associated p-value of 0.4627.**
+
+**In R, I am provided with a z-value of 0.734 with an associated p-value of 0.463.**
+
+
+## Question/Answer 1h
+
+Write a brief interpretation of these results.
+
+**Child's age in the sample was not signifanctly associated with the odds of kyphosis (z-value = 0.734, p-value = 0.463).  Additionally, each additional month increased the odds by 0.43% (95% CI: 0.9929, 1.0159).**
+

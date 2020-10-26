@@ -1,0 +1,223 @@
+---
+title: "week6Homework"
+author: "M. Onimus"
+date: "10/17/2020"
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapse: yes
+      smooth_scrolling: yes
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r libs, echo=FALSE, warning=FALSE, message=FALSE}
+library(ppcor)
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(gtsummary)
+library(haven)
+library(readxl)
+library(rlang)
+library(rstatix)
+```
+
+# Read in Data
+
+```{r readData}
+
+week6 <- read_sav("assignments/GLM_homework_phmc.sav") %>% 
+  mutate(SEX01 = as.numeric(SEX01),
+         GETSTAMP = as.numeric(GETSTAMP))
+
+
+
+```
+
+# Question 1
+
+David is hoping to come up with a linear model that can be used to predict an individuals BMI using a subset of the PHMCcommunity health survey database. 
+
+Next, we wish to control for subject sex and food stamp receipt when looking at BMI and age.
+
+## Question/Answer 1a
+
+What is the partial correlation between age and BMI, controlling for sex and food stamp receipt?
+
+```{r 1a}
+
+cleanWeek6 <- week6 %>% 
+  select(RESPAGE, BMI, SEX01, GETSTAMP) %>% 
+  na.omit()
+
+partial <- pcor.test(cleanWeek6$RESPAGE, cleanWeek6$BMI, cleanWeek6[,c('SEX01', 'GETSTAMP')])
+
+
+```
+
+**The partial correlation between age and BMI controlling for Sex and Food Stamps is `r round(partial$estimate,4)`.**
+
+## Question/Answer 1b
+
+Write out the regression equation for the prediction of BMI using subject age, sex, and food stamp receipt. 
+
+$BMI = \beta_0 + \beta_1age + \beta_2sex + \beta_3foodStamp + \epsilon_i$
+
+## Question/Answer 1c
+
+What are the null and alternative hypotheses for the overall F test for your model?
+
+$H_0:\beta_1 = 0, \beta_2 = 0, \beta_3 = 0$ 
+$H_A:\beta_1 \neq 0$ and/or $\beta_2 \neq 0$ and/or $\beta_3 \neq 0$
+
+## Question/Answer 1d
+
+What are the results of inference about the overall model? For the three predictors?
+
+```{r 1f}
+
+lm <- lm(BMI ~ RESPAGE + SEX01 + GETSTAMP, data = cleanWeek6)
+
+lmSummary <- summary(lm)
+
+lmSummary$coefficients
+
+```
+
+RESPAGE: $t_{3,9687}=$ `r round(lmSummary$coefficients[[2,3]],3)` $p=$ `r round(lmSummary$coefficients[[2,4]],3)` 
+
+SEX01: $t_{3,9687}=$ `r round(lmSummary$coefficients[[3,3]],3)` $p=$ `r round(lmSummary$coefficients[[3,4]],3)` 
+
+GETSTAMP: $t_{3,9687}=$ `r round(lmSummary$coefficients[[4,3]],3)` $p=$ `r round(lmSummary$coefficients[[4,4]],3)` 
+
+
+## Question/Answer 1e
+
+How do the assumptions of linear regression hold up in this case? Use the appropriate plots to support your discussion.
+
+```{r 1ea}
+ggplot(data = NULL, aes(x = lm$fitted.values, y = lm$residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  labs(
+    x = "Predicted Value",
+    y = "Residual"
+  ) +
+  theme_classic()
+
+
+```
+
+**The residual/predicted plot above shows a slightly skewed distrubtion with a higher density of points below 0.**
+
+```{r 1eb}
+
+ggplot(data = NULL, aes(sample = lm$residuals)) +
+  geom_qq() +
+  theme_classic()
+
+ggplot(data = NULL, aes(x = lm$residuals)) +
+  geom_histogram(bins = 10, ) +
+  theme_classic()
+
+
+```
+
+**The qqplot is not linear at all, showing extensive curving.  The histogram shows a pretty skewed distrubtion.  This is expected after seeing the residuals plot and qq plot.**
+
+## Question/Answer 1h
+
+Write a few sentences describing the results.
+
+**There maybe a signficant linear association between the 3 variables of interest: **
+
+RESPAGE: $t_{3,9687}=$ `r round(lmSummary$coefficients[[2,3]],3)` $p=$ `r round(lmSummary$coefficients[[2,4]],3)` 
+
+SEX01: $t_{3,9687}=$ `r round(lmSummary$coefficients[[3,3]],3)` $p=$ `r round(lmSummary$coefficients[[3,4]],3)` 
+
+GETSTAMP: $t_{3,9687}=$ `r round(lmSummary$coefficients[[4,3]],3)` $p=$ `r round(lmSummary$coefficients[[4,4]],3)` 
+
+**but the resulting R-square (`r round(lmSummary$r.squared,3)`) is relatively weak.  Additionally, there may be significant issues with using the model for prediction based upon the residuals and qq plot as well as the histogram.**
+
+
+# Question 2
+
+As it is known that there are between-sex differences in the aging process (e.g. rate of osteoporosis), it is of interest to include a sex-by-age interaction term in the model.
+
+## Question/Answer 2a
+
+Practically speaking, what does having the interaction in the regression model do?
+
+**An interaction between two variables signify a relationship between the variables and the response is interdependent.  Practiaclly speaking, this interaction means that both predictors are needed to actually model and predict the outcome variable.  These interactions can greatly influence a model and leads to the main effects being inconsequential.**
+
+
+## Question/Answer 2b
+
+Write out the regression equation for the prediction of BMI using subject age, sex, their interaction, and food stamp receipt.
+
+**$BMI = \beta\_0 + \beta\_1age + \beta\_2sex  + \beta_3age*sex + \beta_4foodStamp + \epsilon_i$**
+
+## Question/Answer 2c
+
+What are the results of inference about the interaction between age and sex on BMI, controlling for food stamp receipt?
+
+
+```{r 2d}
+
+lm2 <- lm(BMI ~ RESPAGE*SEX01 + GETSTAMP, data = cleanWeek6)
+
+lmSummary2 <- summary(lm2)
+
+```
+
+**$t_{4,9686}=$ `r round(lmSummary2$coefficients[5,3],2)`, $p=$ `r round(lmSummary2$coefficients[5,4],4)`**
+
+
+## Question/Answer 2d
+
+How do the assumptions of linear regression hold up in this case? Use the appropriate plots to support your discussion.
+
+```{r 2da}
+ggplot(data = NULL, aes(x = lm2$fitted.values, y = lm2$residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  labs(
+    x = "Predicted Value",
+    y = "Residual"
+  ) +
+  theme_classic()
+
+
+```
+
+**The residual/predicted plot above shows a slightly skewed distrubtion with a higher density of points below 0.**
+
+```{r 2eq}
+
+ggplot(data = NULL, aes(sample = lm2$residuals)) +
+  geom_qq() +
+  theme_classic()
+
+ggplot(data = NULL, aes(x = lm2$residuals)) +
+  geom_histogram(bins = 10, ) +
+  theme_classic()
+
+
+```
+
+**The qqplot is not linear at all, showing extensive curving.  The histogram shows a pretty skewed distrubtion.  This is expected after seeing the residuals plot and qq plot.**
+
+## Question/Answer 2e
+
+Write a few sentences describing the results.
+
+**We did not observe a signifcant interaction between age and sex interaction term on BMI ($t_{4,9686}=$ `r round(lmSummary2$coefficients[5,3],2)`, $p=$ `r round(lmSummary2$coefficients[5,4],4)`).  The residual and qq plot as well as the histogram show non-normal trends, this model should be used with extreme caution and my not accurately predict BMI.**
+
+
